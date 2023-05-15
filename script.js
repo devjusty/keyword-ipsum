@@ -6,72 +6,61 @@ const ipsumEl = document.getElementById('ipsum');
 let keywords = keywordEl.value
 
 function loremIpsumGenerator(keywords, length) {
-  // Define an array of Lorem Ipsum words
-  const loremIpsumWords = [
-    "Lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit",
-    "sed", "do", "eiusmod", "tempor", "incididunt", "ut", "labore", "et", "dolore",
-    "magna", "aliqua", "Ut", "enim", "ad", "minim", "veniam", "quis", "nostrud",
-    "exercitation", "ullamco", "laboris", "nisi", "ut", "aliquip", "ex", "ea",
-    "commodo", "consequat", "Duis", "aute", "irure", "dolor", "in", "reprehenderit",
-    "in", "voluptate", "velit", "esse", "cillum", "dolore", "eu", "fugiat", "nulla",
-    "pariatur", "Excepteur", "sint", "occaecat", "cupidatat", "non", "proident",
-    "sunt", "in", "culpa", "qui", "officia", "deserunt", "mollit", "anim", "id",
-    "est", "laborum"
+  const paragraphCount = length;
+  const words = [
+    "lorem",
+    "ipsum",
+    "dolor",
+    "sit",
+    "amet",
+    "consectetur",
+    "adipiscing",
+    "elit",
+    "sed",
+    "do",
+    "eiusmod",
+    "tempor",
+    "incididunt",
+    "ut",
+    "labore",
+    "et",
+    "dolore",
+    "magna",
+    "aliqua"
   ];
-
-  // Generate a random sentence using the keywords
-  // const randomSentence = () => {
-  //   const sentence = [];
-  //   for (let i = 0; i < length; i++) {
-  //     if (Math.random() > 0.7 && keywords.length > 0) {
-  //       sentence.push(keywords[Math.floor(Math.random() * keywords.length)]);
-  //     } else {
-  //       sentence.push(loremIpsumWords[Math.floor(Math.random() * loremIpsumWords.length)]);
-  //     }
-  //   }
-  //   return sentence.join(" ") + ".";
-  // };
-
-    // Generate a random sentence using the keywords
-    const randomSentence = () => {
-      const sentence = [];
-      for (let i = 0; i < length; i++) {
-        if (Math.random() > 0.7 && keywords.length > 0) {
-          sentence.push(keywords[Math.floor(Math.random() * keywords.length)]);
-        } else {
-          sentence.push(loremIpsumWords[Math.floor(Math.random() * loremIpsumWords.length)]);
+  const sentences = [
+    "Lorem ipsum dolor sit amet.",
+    "Consectetur adipiscing elit.",
+    "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "Ut enim ad minim veniam.",
+    "Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+    "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+    "Excepteur sint occaecat cupidatat non proident.",
+    "Sunt in culpa qui officia deserunt mollit anim id est laborum."
+  ];
+  let paragraphs = "";
+  for (let i = 0; i < paragraphCount; i++) {
+    let sentenceCount = Math.floor(Math.random() * 5) + 1;
+    let paragraph = "";
+    for (let j = 0; j < sentenceCount; j++) {
+      let sentence = sentences[Math.floor(Math.random() * sentences.length)];
+      let wordsCount = Math.floor(Math.random() * (length / sentenceCount)) + 1;
+      let sentenceWords = [];
+      for (let k = 0; k < wordsCount; k++) {
+        let word = words[Math.floor(Math.random() * words.length)];
+        if (k === 0) {
+          word = word.charAt(0).toUpperCase() + word.slice(1);
         }
+        sentenceWords.push(word);
       }
-      // Capitalize the first letter of the first word in the sentence
-      const capitalizedSentence = sentence.join(" ").charAt(0).toUpperCase() + sentence.join(" ").slice(1);
-      return capitalizedSentence + ".";
-    };
-
-  // Generate a random paragraph using the random sentence generator
-  const randomParagraph = () => {
-    const paragraph = [];
-    for (let i = 0; i < 5; i++) {
-      paragraph.push(randomSentence());
+      sentence += " " + sentenceWords.join(" ");
+      paragraph += sentence + " ";
     }
-    return paragraph.join(" ");
-  };
-
-  // Generate the final Lorem Ipsum text using the random paragraph generator
-  const loremIpsumText = () => {
-    const text = [];
-    for (let i = 0; i < 5; i++) {
-      text.push(randomParagraph());
-    }
-    return text.join("\n\n");
-  };
-
-  // Return the final Lorem Ipsum text
-  // console.log(loremIpsumText());
-  return loremIpsumText();
+    paragraphs += "<p>" + paragraph + "</p>";
+  }
+  return paragraphs;
 }
 
-// Example usage
-console.log(loremIpsumGenerator(keywords, 10));
 
 formEl.addEventListener("submit", (e) => {
   e.preventDefault();
