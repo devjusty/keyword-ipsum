@@ -91,18 +91,26 @@ const copyButtonEl = document.getElementById('copy')
 
 copyButtonEl.addEventListener('click', () =>{
 
+  navigator.clipboard.writeText(ipsumEl.value)
+    .then(() => {
+      console.log('copied to clipboard')
+    },
+    () => {
+      console.log('not copied to clipboard')
+    })
 
 })
 
 
-copyButtonEl.onclick(() => {
+// copyButtonEl.onclick(() => {
 
-    navigator.clipboard.writeText(this.ipsumEl.innerHTML).then(() => {
-      this.copiedCode.innerHTML = '<div class="alert">Copied to clipboard \u{1F44D}</div>'
-    }, () => {
-      this.copiedCode.innerHTML = '<div class="alert">\u{1F494} Not Supported</div>'
-    }), setTimeout(() => {
-      this.copiedCode.innerHTML = ""
-    }, 2e3)
+//     navigator.clipboard.writeText(this.ipsumEl.value)
+//     .then(() => {
+//       this.copiedCode.innerHTML = '<div class="alert">Copied to clipboard \u{1F44D}</div>'
+//     }, () => {
+//       this.copiedCode.innerHTML = '<div class="alert">\u{1F494} Not Supported</div>'
+//     }), setTimeout(() => {
+//       this.copiedCode.innerHTML = ""
+//     }, 2e3)
 
-})
+// })
