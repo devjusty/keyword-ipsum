@@ -4,13 +4,28 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <meta
+      name="description"
+      content="Generate custom Lorem Ipsum text with keywords. Enter your list of keywords and sentence length, and generate unique placeholder text for your project or design. Try it now!"
+    />
+    <title>
+      Generate Custom Lorem Ipsum Text with Keywords | Lorem Ipsum Generator
+    </title>
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div class="container">
       <h1>keyword ipsum generator</h1>
+      <p>
+        Use our Lorem Ipsum Generator to generate custom text with your own
+        keywords. Enter your list of keywords and sentence length, and generate
+        unique Lorem Ipsum text for your project or design. Perfect for filling
+        in placeholder text and visualizing design layouts. Try it now!
+      </p>
       <form id="form">
+        <label for="keywords">keywords (comma separated)</label>
         <input type="text" name="keywords" id="keywords" />
+        <label for="length">length</label>
         <input type="number" name="length" id="length" min="1" />
         <button id="make">make my ipsum</button>
         <textarea name="ipsum" id="ipsum" cols="30" rows="10"></textarea>
