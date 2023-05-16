@@ -32,21 +32,34 @@
     <div class="container">
       <h1>keyword ipsum generator</h1>
       <p>
-        Use our Lorem Ipsum Generator to generate custom text with your own
+        Use this Lorem Ipsum Generator to generate custom text with your own
         keywords. Enter your list of keywords and sentence length, and generate
         unique Lorem Ipsum text for your project or design. Perfect for filling
         in placeholder text and visualizing design layouts. Try it now!
       </p>
       <form id="form">
         <label for="keywords">keywords (comma separated)</label>
-        <input type="text" name="keywords" id="keywords" />
+        <input
+          type="text"
+          name="keywords"
+          id="keywords"
+          placeholder="awesome, rad, sick"
+        />
         <label for="length">length</label>
-        <input type="number" name="length" id="length" min="1" />
-        <button id="make">make my ipsum</button>
-        <textarea name="ipsum" id="ipsum" cols="30" rows="10"></textarea>
+        <input type="number" name="length" id="length" min="1" value="2" />
+        <button id="make" type="submit">make my ipsum</button>
+        <textarea
+          name="ipsum"
+          id="ipsum"
+          cols="30"
+          rows="10"
+          placeholder="keyword ipsum"
+        ></textarea>
       </form>
-      <button id="copy">copy</button>
+
+      <button id="copy" type="button">copy</button>
+      <div id="output"></div>
     </div>
-    <script src="script.js" />
+    <script src="script.js"></script>
   </body>
 </html>
