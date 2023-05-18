@@ -1,35 +1,25 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import bookLogo from "/bx-book-open.svg";
+import "./App.css";
+import Generator from './components/Generator';
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
+      <div className="container mx-auto">
+        <img src={bookLogo} className="logo mx-auto" alt="Vite logo" />
+        <h1 className='py-2'>Keyword Ipsum</h1>
+        <p className='text-lg lg:w-2/3 mx-auto sm:w-auto'>
+          Use this Lorem Ipsum Generator to generate custom text with your own
+          keywords. Enter your list of keywords and sentence length, and
+          generate unique Lorem Ipsum text for your project or design. Perfect
+          for filling in placeholder text and visualizing design layouts. Try it
+          now!
         </p>
+        <Generator />
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
