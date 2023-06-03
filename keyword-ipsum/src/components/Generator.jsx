@@ -8,7 +8,9 @@ const Generator = () => {
   const [error, setError] = useState("");
   const [unit, setUnit] = useState("sentences");
 
-  // const [paragraphCount, setParagraphCount] = useState(2);
+  const handleUnitChange = (event) => {
+    setUnit(event.target.value);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -18,17 +20,16 @@ const Generator = () => {
       setIpsumText("");
     } else {
       setError("");
-      setIpsumText(generateIpsum(keywords.split(/[,\s]+/), parseInt(length), unit));
+      setIpsumText(
+        generateIpsum(keywords.split(/[,\s]+/), parseInt(length), unit)
+      );
     }
-
   };
-
-  // const generateIpsum = (keywords, length, unit) => {};
 
   return (
     <div>
       <form
-        className="form flex flex-row gap-2 py-2 mx-auto"
+        className="form flex flex-row items-center justify-center gap-2 py-2 mx-auto"
         onSubmit={handleSubmit}
       >
         <div className="form-control max-w-xs text-black">
@@ -57,38 +58,55 @@ const Generator = () => {
             className="input input-bordered w-full max-w-xs text-black"
           />
         </div>
-        <div className="btn-group">
-          <label htmlFor="unit" className="label"></label>
-          <button
-            className={unit === "words" ? "btn btn-active" : "btn"}
-            onClick={() => setUnit("words")}
-          >
-            Words
-          </button>
-          <button
-            className={unit === "sentences" ? "btn btn-active" : "btn"}
-            onClick={() => setUnit("sentences")}
-          >
-            Sentences
-          </button>
-          <button
-            className={unit === "paragraphs" ? "btn btn-active" : "btn"}
-            onClick={() => setUnit("paragraphs")}
-          >
-            Paragraphs
+        <div className="form-control max-w-xs">
+          {" "}
+          <label htmlFor="unit" className="label">
+            <span className="label-text">Units</span>
+          </label>
+          <div className="join">
+            <input
+              className="join-item btn"
+              type="radio"
+              value="words"
+              checked={unit === "words"}
+              name="options"
+              aria-label="Words"
+              onChange={handleUnitChange}
+            />
+            <input
+              className="join-item btn"
+              type="radio"
+              value="sentences"
+              checked={unit === "sentences"}
+              name="options"
+              aria-label="Sentences"
+              onChange={handleUnitChange}
+            />
+            <input
+              className="join-item btn"
+              type="radio"
+              value="paragraphs"
+              checked={unit === "paragraphs"}
+              name="options"
+              aria-label="Paragraphs"
+              onChange={handleUnitChange}
+            />
+          </div>
+        </div>
+
+        <div className="form-control max-w-xs self-end">
+          <button type="submit" className="btn btn-primary">
+            Make My Ipsum
           </button>
         </div>
-        <button type="submit" className="btn btn-primary self-end">
-          Make My Ipsum
-        </button>
       </form>
       <div className="form-control w-full">
         <textarea
           className="textarea textarea-bordered text-black"
           placeholder={ipsumText}
         ></textarea>
-        <button className="btn btn-secondary self-end">Copy My Ipsum</button>
       </div>
+      <button className="btn btn-secondary">Copy My Ipsum</button>
       {error && <p>{error}</p>}
       {ipsumText && <p>{ipsumText}</p>}
     </div>
