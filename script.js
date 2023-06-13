@@ -79,6 +79,12 @@ function generateIpsum(keywords, length) {
     "laborum",
   ];
 
+  // Fetch extra keywords from the thesaurus API
+
+  // Get two keywords per keyword
+  // Add them to the keywords array
+  // Display the key words on the front end
+
   const getRandomInt = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
@@ -153,3 +159,50 @@ copyButtonEl.addEventListener("click", () => {
     }
   );
 });
+
+const headers = {'X-Api-Key': 'Qll2pIv4mF7qkRUQL2p57w==MzS0ni5oTtotSDLI'}
+
+
+async function getExtra(keywords){
+  const apiUrl = 'https://api-ninjas.com/v1/thesaurus?word='
+
+  try {
+    // const keywordArray = keywords.split(/[,\s]+/)
+    const keywordArray = keywords.split(' ');
+    const synonymPromises = keywordArray.map(async (keyword) => {
+      const response = await fetch(`https://api.api-ninjas.com/v1/thesaurus?word=${keyword}`, {
+        headers: {
+          'X-Api-Key': 'API NINJA KEY'
+        },
+      });
+      const data = await response.json();
+      const synonyms = data.synonyms.slice(0,2); // get the first two synonyms
+      return `${keyword}: ${synonyms.join(', ')}`;
+    });
+
+    const synonymResults = await Promise.all(synonymPromises);
+    const synonymString = synonymResults.join('\n');
+
+    console.log(synonymString); // Display the synonym string
+
+
+  } catch (error) {
+    console.log('Error:', error);
+  }
+
+
+}
+
+getExtra('horses breakfast sports');
+
+// const theFetch = fetch(`https://api.api-ninjas.com/v1/thesaurus?word=horses`, {
+//   headers: {
+//     // 'Content-Type': 'application/json',
+//     'X-Api-Key': 'Qll2pIv4mF7qkRUQL2p57w==MzS0ni5oTtotSDLI',
+//     // 'Access-Control-Allow-Origin': '*',
+//   },
+// }).then(response => response.json()).then(data => {
+//     console.log(data["synonyms"]);
+//   })
+
+// console.log(theFetch)
