@@ -2,9 +2,9 @@ import { useState } from "react";
 import { generateIpsum } from "./GeneratorLogic";
 
 const Generator = () => {
-  const [ipsumText, setIpsumText] = useState("keyword ipsum");
+  const [ipsumText, setIpsumText] = useState("");
   const [keywords, setKeywords] = useState("");
-  const [length, setLength] = useState("");
+  const [length, setLength] = useState(5);
   const [error, setError] = useState("");
   const [unit, setUnit] = useState("sentences");
 
@@ -33,7 +33,8 @@ const Generator = () => {
         onSubmit={handleSubmit}
       >
         <div className="flex flex-row align-items justify-center py-2 gap-2">
-          <div className="form-control max-w-xs text-black">
+
+          <div className="form-control w-full text-black">
             <label className="label" htmlFor="keywords">
               <span className="label-text text-primary">Keywords</span>
             </label>
@@ -43,10 +44,11 @@ const Generator = () => {
               value={keywords}
               id="keywords"
               onChange={(e) => setKeywords(e.target.value)}
-              className="input input-bordered w-full max-w-xs"
+              className="input input-bordered w-full "
             />
           </div>
-          <div className="form-control max-w-xs">
+
+          <div className="form-control max-w-none">
             <label className="label" htmlFor="length">
               <span className="label-text text-primary">Length</span>
             </label>
@@ -56,9 +58,10 @@ const Generator = () => {
               min={1}
               value={length}
               onChange={(e) => setLength(e.target.value)}
-              className="input input-bordered w-full max-w-xs text-black"
+              className="input input-bordered w-full max-w-none text-black"
             />
           </div>
+
           <div className="form-control max-w-xs">
             <label htmlFor="units" className="label">
               <span className="label-text text-primary">Units</span>
@@ -97,9 +100,9 @@ const Generator = () => {
 
         <div className="flex flex-row align-items justify-center py-2 gap-2">
           <div className="form-control">
-            <label className="label cursor-pointer">
-              <span className="label-text text-primary">Add Synonyms</span>
-              <input type="checkbox" className="toggle" checked />
+            <label className="label cursor-pointer py-2">
+              <span className="label-text text-primary px-1">Add Synonyms</span>
+              <input type="checkbox" className="toggle"  />
             </label>
           </div>
 
@@ -116,6 +119,14 @@ const Generator = () => {
           placeholder={ipsumText}
         ></textarea>
       </div>
+
+      <div className="w-full min-h-min rounded-lg text-secondary bg-slate-200 p-4">
+        {ipsumText ? ipsumText :          <p>Use this Lorem Ipsum Generator to generate custom text with your own
+          keywords. Enter your list of keywords and sentence length, and
+          generate unique Lorem Ipsum text for your project or design.</p>}
+
+      </div>
+
       <button className="btn btn-secondary my-2">Copy My Ipsum</button>
       {error && <p>{error}</p>}
       {ipsumText && <p>{ipsumText}</p>}
