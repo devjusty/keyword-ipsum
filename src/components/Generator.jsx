@@ -131,13 +131,13 @@ const Generator = () => {
           <span className="loading loading-spinner loading-lg"></span>
         </div>
       )}
-      <form className="form py-4 mx-auto" onSubmit={handleSubmit} aria-labelledby="generator-title">
+      <form className="form py-6 px-4 mx-auto max-w-xl space-y-6" onSubmit={handleSubmit} aria-labelledby="generator-title">
         <div id="generator-title" className="sr-only">
           Lorem Ipsum Generator
         </div>
-        <div className="flex flex-col md:flex-row gap-2 mb-2 space-y-2 md:space-y-0">
+      <div className="flex flex-col gap-4 mb-4">
           <div className="form-control">
-            <label className="label" htmlFor="keywords">
+            <label htmlFor="keywords" className="label mb-1 mr-2">
               <span className="label-text text-primary">Keywords</span>
             </label>
             <input
@@ -149,13 +149,13 @@ const Generator = () => {
               className="input input-bordered"
               aria-describedby="keywords-hint"
             />
-            <small id="keywords-hint" className="text-gray-500">
-              Enter keywords separated by commas
+            <small id="keywords-hint" className="block text-gray-500 whitespace-nowrap">
+              Separate with commas
             </small>
           </div>
 
           <div className="form-control">
-            <label className="label" htmlFor="length">
+            <label className="label mb-1 mr-2" htmlFor="length">
               <span className="label-text text-primary">Length</span>
             </label>
             <input
@@ -169,14 +169,14 @@ const Generator = () => {
           </div>
         </div>
 
-        <div className="flex flex-col med:flex-row items-center gap-2 mb-4">
+        <div className="flex flex-col gap-4 mb-6">
           <div className="form-control max-w-xs w-full">
             <div role="radiogroup" aria-labelledby="units-label">
               <span id="units-label" className="sr-only">
                 Select text generation units
               </span>
-              <label htmlFor="units" className="label">
-                <span className="label-text text-primary">Units</span>
+              <label htmlFor="units" className="label mb-1">
+                <span className="label-text text-primary mr-2">Units</span>
               </label>
               <div className="join">
                 <input
@@ -210,9 +210,9 @@ const Generator = () => {
             </div>
           </div>
 
-          <div className="form-control flex-row items-center gap-2 w-full">
-            <label className="label cursor-pointer py-2">
-              <span className="label-text text-primary mr-1">Add Synonyms</span>
+          <div className="form-control flex flex-col gap-4 w-full">
+            <label className="label cursor-pointer py-2 mb-1">
+              <span className="label-text text-primary mr-2">Add Synonyms</span>
               <input
                 type="checkbox"
                 className="toggle"
@@ -228,7 +228,7 @@ const Generator = () => {
               </div>
             )}
 
-            <button type="submit" className="btn btn-primary ml-auto">
+            <button type="submit" className="btn btn-primary mx-auto">
               Make My Ipsum
             </button>
           </div>
@@ -236,7 +236,7 @@ const Generator = () => {
       </form>
 
       <div className="w-full">
-        <div className="bg-base-200 rounded-lg p-4 mb-2 min-h-[200px]">
+        <div className="bg-base-200 rounded-lg p-6 mb-4 min-h-[200px]">
           {ipsumText ? (
             <pre className="whitespace-pre-wrap break-words">{ipsumText}</pre>
           ) : (
@@ -244,7 +244,7 @@ const Generator = () => {
           )}
         </div>
 
-        <div className="flex justy-between items-center">
+        <div className="flex justify-between items-center px-1">
           <div className="text-sm text-gray-500">
             {ipsumText &&
               (() => {
