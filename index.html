@@ -1,65 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="icon" type="image/svg+xml" href="/src/assets/bx-book-open.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
       content="Generate custom Lorem Ipsum text with keywords. Enter your list of keywords and sentence length, and generate unique placeholder text for your project or design. Try it now!"
     />
-    <title>
-      Generate Custom Lorem Ipsum Text with Keywords | Lorem Ipsum Generator
-    </title>
-    <link rel="stylesheet" href="style.css" />
-    <!-- <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          container: {
-            center: true,
-          },
-          extend: {
-            colors: {
-              clifford: "#da373d",
-            },
-          },
-        },
-      };
-    </script> -->
+    <title>Keyword Ipsum | Generate Custom Lorem Ipsum Text with Keywords</title>
   </head>
   <body>
-    <div class="container">
-      <h1>keyword ipsum generator</h1>
-      <p>
-        Use this Lorem Ipsum Generator to generate custom text with your own
-        keywords. Enter your list of keywords and sentence length, and generate
-        unique Lorem Ipsum text for your project or design. Perfect for filling
-        in placeholder text and visualizing design layouts. Try it now!
-      </p>
-      <form id="form">
-        <label for="keywords">keywords (comma separated)</label>
-        <input
-          type="text"
-          name="keywords"
-          id="keywords"
-          placeholder="awesome, rad, sick"
-        />
-        <label for="length">length</label>
-        <input type="number" name="length" id="length" min="1" value="2" />
-        <button id="make" type="submit">make my ipsum</button>
-        <textarea
-          name="ipsum"
-          id="ipsum"
-          cols="30"
-          rows="10"
-          placeholder="keyword ipsum"
-        ></textarea>
-      </form>
-
-      <button id="copy" type="button">copy</button>
-      <div id="output"></div>
-    </div>
-    <script src="script.js"></script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

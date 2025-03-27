@@ -1,0 +1,24 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+@font-face {
+  font-family: "RubikScribble";
+  src:
+    local("RubikScribble-Regular"),
+    url("./assets/fonts/RubikScribble-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Satoshi";
+  src:
+    local("Satoshi-Regular"),
+    url("./assets/fonts/satoshi-regular-webfont.woff2") format("woff2");
+}
+
+h1 {
+  font-family: "RubikScribble";
+}
+
+body {
+  font-family: "Satoshi";
+}

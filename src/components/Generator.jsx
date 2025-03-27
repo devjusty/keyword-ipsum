@@ -14,119 +14,51 @@ const Generator = () => {
   const [error, setError] = useState("");
   const [unit, setUnit] = useState("sentences");
 
-  const fetchSynonyms = useCallback(async (keyword) => {
-    setIsLoadingSynonyms(true);
-    // Check if the synonym is already cached
-    if (synonymsCache[keyword]) {
-      return synonymsCache[keyword];
-    }
-
-    const synonymPromises = keyword.map(async (keyword) => {
-      if (!keywordSynonyms[keyword]) {
+  const fetchSynonyms = useCallback(
+    async (keywordsArray) => {
+      setIsLoadingSynonyms(true);
+      const synonymPromises = keywordsArray.map(async (keyword) => {
+        if (synonymsCache[keyword]) {
+          return { [keyword]: synonymsCache[keyword] };
+        }
         try {
           const response = await fetch(`https://api.datamuse.com/words?rel_syn=${keyword}`);
           const data = await response.json();
-
-          return {
-            [keyword]: data
+          const synonymList = data
             .slice(0, 5)
             .map((item) => item.word)
-            .filter((word) => word.toLowerCase() !== keyword.toLowerCase()),
-          };
-        } catch (error) {
+            .filter((word) => word.toLowerCase() !== keyword.toLowerCase());
+          return { [keyword]: synonymList };
+        } catch {
           return { [keyword]: [] };
         }
-      }
-      return { [keyword]: keywordSynonyms[keyword] };
-    });
-
-    const results = await Promise.all(synonymPromises);
-
-    const newSynonyms = results.reduce((acc, curr) => ({...acc, ...curr}), {});
-  };
-
-    setKeywordSynonyms((prev) => ({...prev, ...newSynonyms}));
-    setIsLoadingSynonyms(false);
-
-    try {
-      const response = await fetch(`https://api.datamuse.com/words?rel_syn=${keyword}`);
-      const data = await response.json();
-
-      // Extract top 5 synonyms
-      const synonymList = data
-        .slice(0, 5)
-        .map((item) => item.word)
-        .filter((word) => word.toLowerCase() !== keyword.toLowerCase());
-
-
-      // Update the cache
-      setSynonymsCache((prev) => ({
-        ...prev,
-        [keyword]: synonymList,
-      }));
-
-      return synonymList;
-    } catch (error) {
-      toast.error("Failed to fetch synonyms", {
-        position: "bottom-center",
-        duration: 2000,
-        icon: "❌",
       });
-      return []
-    }
-  }, [synonymsCache]);
 
-  // Memoize the synonyms to prevent unnecessary re-renders
-  const processedSynonyms = useMemo(() => {
-    if (!useSynonyms) return keywords.split(/[,\s]+/);
-
-    return keywords.split(/[,\s]+/).flatMap((keyword) => {
-      const cachedSynonyms = synonymsCache[keyword] || [];
-      return [keyword, ...cachedSynonyms];
-    });
-  }, [keywords, synonymsCache, useSynonyms]);
+      const results = await Promise.all(synonymPromises);
+      const newSynonyms = results.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+      setSynonymsCache((prev) => ({ ...prev, ...newSynonyms }));
+      setIsLoadingSynonyms(false);
+      return newSynonyms;
+    },
+    [synonymsCache]
+  );
 
   const handleKeywordChange = (event) => {
     const value = event.target.value;
     setKeywords(value);
-
-    // Optionally fetch synonyms
-    if (useSynonyms) {
-      const keywordList = value.split(/[,\s]+/);
-      keywordList.forEach((keyword) => {
-        if (keyword && !synonyms[keyword]) {
-          fetchSynonyms(keyword);
-        }
-      });
-    }
   };
-
-  useEffect(() => {
-    if (useSynonyms && keywords) {
-      const keywordList = keywords.split(/[,\s]+/);
-      fetchSynonyms(keywordList);
-    }
-  }, [useSynonyms, keywords]);
 
   const handleUnitChange = (event) => {
     setUnit(event.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const keywordList = keywords.split(/[,\s]+/);
-    const finalKeywords = useSynonyms
-      ? keywordList.split(/[,\s]+/).flatMap((keyword) => (synonyms[keyword] ? [keyword, ...synonyms[keyword]] : [keyword]))
-      : keywordList;
-
-    // Trim and validate keywords
+    const keywordList = keywords.split(/[,\s]+/).filter(Boolean);
     const trimmedKeywords = keywords.trim();
-
-    // Clear previous error state
     setError("");
 
-    // Validation with toast notifications
     if (!trimmedKeywords) {
       toast.error("Please enter keywords", {
         position: "bottom-center",
@@ -145,11 +77,17 @@ const Generator = () => {
       return;
     }
 
-    // Generate the Ipsum text
+    let finalKeywords = keywordList;
+
+    if (useSynonyms) {
+      const fetched = await fetchSynonyms(keywordList);
+      finalKeywords = keywordList.flatMap((kw) => [kw, ...(fetched[kw] || [])]);
+    }
+
     try {
-      const generatedText = generateIpsum(trimmedKeywords.split(/[,\s]+/), parseInt(length), unit);
+      const generatedText = generateIpsum(finalKeywords, parseInt(length), unit);
       setIpsumText(generatedText);
-    } catch (error) {
+    } catch {
       toast.error("Failed to generate Ipsum text", {
         position: "bottom-center",
         duration: 2000,
@@ -193,10 +131,10 @@ const Generator = () => {
           <span className="loading loading-spinner loading-lg"></span>
         </div>
       )}
-      <form className="form py-4 mx-auto" onSubmit={handleSubmit} aria-labelledby='generator-title'>
-      <div id='generator-title' className="sr-only">
-        Lorem Ipsum Generator
-      </div>
+      <form className="form py-4 mx-auto" onSubmit={handleSubmit} aria-labelledby="generator-title">
+        <div id="generator-title" className="sr-only">
+          Lorem Ipsum Generator
+        </div>
         <div className="flex flex-col md:flex-row gap-2 mb-2 space-y-2 md:space-y-0">
           <div className="form-control">
             <label className="label" htmlFor="keywords">
@@ -209,11 +147,11 @@ const Generator = () => {
               onChange={handleKeywordChange}
               placeholder="awesome, radical, sick"
               className="input input-bordered"
-              aria-describedby='keywords-hint'
+              aria-describedby="keywords-hint"
             />
-                 <small id="keywords-hint" className="text-gray-500">
-        Enter keywords separated by commas
-      </small>
+            <small id="keywords-hint" className="text-gray-500">
+              Enter keywords separated by commas
+            </small>
           </div>
 
           <div className="form-control">
@@ -233,42 +171,43 @@ const Generator = () => {
 
         <div className="flex flex-col med:flex-row items-center gap-2 mb-4">
           <div className="form-control max-w-xs w-full">
-          <div role='radiogroup' aria-labelledby='units-label'>
-            <span id="units-label" className="sr-only">Select text generation units</span>
-            <label htmlFor="units" className="label">
-              <span className="label-text text-primary">Units</span>
-            </label>
-            <div className="join">
-              <input
-                className="join-item btn btn-sm w-1/3"
-                type="radio"
-                value="words"
-                checked={unit === "words"}
-                name="units"
-                aria-label="Words"
-                onChange={handleUnitChange}
-              />
-              <input
-                className="join-item btn btn-sm w-1/3"
-                type="radio"
-                value="sentences"
-                checked={unit === "sentences"}
-                name="units"
-                aria-label="Sentences"
-                onChange={handleUnitChange}
-              />
-              <input
-                className="join-item btn btn-sm w-1/3"
-                type="radio"
-                value="paragraphs"
-                checked={unit === "paragraphs"}
-                name="units"
-                aria-label="Paragraphs"
-                onChange={handleUnitChange}
-              />
+            <div role="radiogroup" aria-labelledby="units-label">
+              <span id="units-label" className="sr-only">
+                Select text generation units
+              </span>
+              <label htmlFor="units" className="label">
+                <span className="label-text text-primary">Units</span>
+              </label>
+              <div className="join">
+                <input
+                  className="join-item btn btn-sm w-1/3"
+                  type="radio"
+                  value="words"
+                  checked={unit === "words"}
+                  name="units"
+                  aria-label="Words"
+                  onChange={handleUnitChange}
+                />
+                <input
+                  className="join-item btn btn-sm w-1/3"
+                  type="radio"
+                  value="sentences"
+                  checked={unit === "sentences"}
+                  name="units"
+                  aria-label="Sentences"
+                  onChange={handleUnitChange}
+                />
+                <input
+                  className="join-item btn btn-sm w-1/3"
+                  type="radio"
+                  value="paragraphs"
+                  checked={unit === "paragraphs"}
+                  name="units"
+                  aria-label="Paragraphs"
+                  onChange={handleUnitChange}
+                />
+              </div>
             </div>
-          </div>
-
           </div>
 
           <div className="form-control flex-row items-center gap-2 w-full">
@@ -281,6 +220,13 @@ const Generator = () => {
                 onChange={() => setUseSynonyms(!useSynonyms)}
               />
             </label>
+            {useSynonyms && (
+              <div className="text-sm text-gray-500 mt-1">
+                {isLoadingSynonyms
+                  ? "Fetching synonyms..."
+                  : `Synonyms loaded for ${Object.keys(synonymsCache).length} keyword(s).`}
+              </div>
+            )}
 
             <button type="submit" className="btn btn-primary ml-auto">
               Make My Ipsum
@@ -300,9 +246,23 @@ const Generator = () => {
 
         <div className="flex justy-between items-center">
           <div className="text-sm text-gray-500">
-            {ipsumText && `${unit.charAt(0).toUpperCase() + unit.slice(1)}: ${ipsumText.split(/\s+/).length}`}
+            {ipsumText &&
+              (() => {
+                if (unit === "words") {
+                  return `Words: ${ipsumText.split(/\s+/).length}`;
+                } else if (unit === "sentences") {
+                  return `Sentences: ${ipsumText.split(/[.!?]+/).filter(Boolean).length}`;
+                } else if (unit === "paragraphs") {
+                  return `Paragraphs: ${ipsumText.split(/\n{2,}/).filter(Boolean).length}`;
+                }
+              })()}
           </div>
-          <button className="btn btn-secondary" onClick={handleCopyText} disabled={!ipsumText} aria-label='Copy Ipsum text'>
+          <button
+            className="btn btn-secondary"
+            onClick={handleCopyText}
+            disabled={!ipsumText}
+            aria-label="Copy Ipsum text"
+          >
             Copy My Ipsum
           </button>
         </div>
