@@ -20,21 +20,15 @@ const Generator = () => {
       setIpsumText("");
     } else {
       setError("");
-      setIpsumText(
-        generateIpsum(keywords.split(/[,\s]+/), parseInt(length), unit)
-      );
+      setIpsumText(generateIpsum(keywords.split(/[,\s]+/), parseInt(length), unit));
     }
   };
 
   return (
     <div>
-      <form
-        className="form py-4 mx-auto"
-        onSubmit={handleSubmit}
-      >
+      <form className="form py-4 mx-auto" onSubmit={handleSubmit}>
         <div className="flex flex-row align-items justify-center py-2 gap-2">
-
-          <div className="form-control w-full text-black">
+          <div className="form-control w-full">
             <label className="label" htmlFor="keywords">
               <span className="label-text text-primary">Keywords</span>
             </label>
@@ -58,7 +52,7 @@ const Generator = () => {
               min={1}
               value={length}
               onChange={(e) => setLength(e.target.value)}
-              className="input input-bordered w-full max-w-none text-black"
+              className="input input-bordered w-full max-w-none"
             />
           </div>
 
@@ -102,7 +96,7 @@ const Generator = () => {
           <div className="form-control">
             <label className="label cursor-pointer py-2">
               <span className="label-text text-primary px-1">Add Synonyms</span>
-              <input type="checkbox" className="toggle"  />
+              <input type="checkbox" className="toggle" />
             </label>
           </div>
 
@@ -114,17 +108,18 @@ const Generator = () => {
         </div>
       </form>
       <div className="form-control w-full">
-        <textarea
-          className="textarea textarea-bordered text-black"
-          placeholder={ipsumText}
-        ></textarea>
+        <textarea className="textarea textarea-bordered text-black" placeholder={ipsumText}></textarea>
       </div>
 
       <div className="w-full min-h-min rounded-lg text-secondary bg-slate-200 p-4">
-        {ipsumText ? ipsumText :          <p>Use this Lorem Ipsum Generator to generate custom text with your own
-          keywords. Enter your list of keywords and sentence length, and
-          generate unique Lorem Ipsum text for your project or design.</p>}
-
+        {ipsumText ? (
+          ipsumText
+        ) : (
+          <p>
+            Use this Lorem Ipsum Generator to generate custom text with your own keywords. Enter your list of keywords
+            and sentence length, and generate unique Lorem Ipsum text for your project or design.
+          </p>
+        )}
       </div>
 
       <button className="btn btn-secondary my-2">Copy My Ipsum</button>

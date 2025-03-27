@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite'
+import tailwindcss from "@tailwindcss/vite";
 import react from '@vitejs/plugin-react'
 import Unfonts from "unplugin-fonts/vite";
 
@@ -6,6 +7,7 @@ import Unfonts from "unplugin-fonts/vite";
 export default defineConfig({
   plugins: [
     react(),
+    tailwindcss(),
     Unfonts({
       // Google Fonts API V2
       google: {
