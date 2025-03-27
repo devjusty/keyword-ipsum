@@ -7,7 +7,12 @@ function App() {
     <>
       <div className="container mx-auto">
         <div className="navbar">
-          <img src={bookLogo} className="navbar-start w-16 h-16" alt="Keyword Ipsum logo" />
+          <img
+            src={bookLogo}
+            className="navbar-start w-16 h-16 custom-stroke"
+            alt="Keyword Ipsum logo"
+            title="Keyword Ipsum - Custom Lorem Ipsum Generator"
+          />
           <div className="flex-none">
             <h1 className="p-1 text-xl text-center">Keyword Ipsum</h1>
           </div>

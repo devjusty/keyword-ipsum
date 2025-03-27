@@ -1,6 +1,10 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { generateIpsum } from "../utils/GeneratorLogic";
 import toast, { Toaster } from "react-hot-toast";
+import DOMPurify from "dompurify";
+import { z } from "zod";
+
+const datamuseSchema = z.array(z.object({ word: z.string() }));
 
 const Generator = () => {
   const [ipsumText, setIpsumText] = useState("");
@@ -11,7 +15,6 @@ const Generator = () => {
   const [synonymsCache, setSynonymsCache] = useState({});
   const [useSynonyms, setUseSynonyms] = useState(false);
   const [length, setLength] = useState(5);
-  const [error, setError] = useState("");
   const [unit, setUnit] = useState("sentences");
 
   const fetchSynonyms = useCallback(
@@ -24,7 +27,8 @@ const Generator = () => {
         try {
           const response = await fetch(`https://api.datamuse.com/words?rel_syn=${keyword}`);
           const data = await response.json();
-          const synonymList = data
+          const validData = datamuseSchema.parse(data);
+          const synonymList = validData
             .slice(0, 5)
             .map((item) => item.word)
             .filter((word) => word.toLowerCase() !== keyword.toLowerCase());
@@ -44,8 +48,7 @@ const Generator = () => {
   );
 
   const handleKeywordChange = (event) => {
-    const value = event.target.value;
-    setKeywords(value);
+    setKeywords(event.target.value);
   };
 
   const handleUnitChange = (event) => {
@@ -57,17 +60,16 @@ const Generator = () => {
 
     const keywordList = keywords.split(/[,\s]+/).filter(Boolean);
     const trimmedKeywords = keywords.trim();
-    setError("");
 
+    // Prevent empty or excessive input.
     if (!trimmedKeywords) {
-      toast.error("Please enter keywords", {
-        position: "bottom-center",
-        duration: 2000,
-        icon: "❌",
-      });
+      toast.error("Please enter keywords", { position: "bottom-center", duration: 2000, icon: "❌" });
       return;
     }
-
+    if (keywordList.length > 10) {
+      toast.error("Too many keywords provided", { position: "bottom-center", duration: 2000, icon: "❌" });
+      return;
+    }
     if (isNaN(length) || length <= 0) {
       toast.error("Please enter a positive number for length", {
         position: "bottom-center",
@@ -78,7 +80,6 @@ const Generator = () => {
     }
 
     let finalKeywords = keywordList;
-
     if (useSynonyms) {
       const fetched = await fetchSynonyms(keywordList);
       finalKeywords = keywordList.flatMap((kw) => [kw, ...(fetched[kw] || [])]);
@@ -86,7 +87,7 @@ const Generator = () => {
 
     try {
       const generatedText = generateIpsum(finalKeywords, parseInt(length), unit);
-      setIpsumText(generatedText);
+      setIpsumText(DOMPurify.sanitize(generatedText));
     } catch {
       toast.error("Failed to generate Ipsum text", {
         position: "bottom-center",
@@ -97,29 +98,17 @@ const Generator = () => {
   };
 
   const handleCopyText = () => {
-    if (ipsumText) {
+    if (!ipsumText) {
+      toast.error("No text to copy", { position: "bottom-center", duration: 2000, icon: "❌" });
+      return;
+    }
+    if (navigator.clipboard?.writeText) {
       navigator.clipboard
         .writeText(ipsumText)
-        .then(() => {
-          toast.success("Copied to clipboard", {
-            position: "bottom-center",
-            duration: 2000,
-            icon: "📋",
-          });
-        })
-        .catch((error) => {
-          toast.error("Failed to copy text", {
-            position: "bottom-center",
-            duration: 2000,
-            icon: "❌",
-          });
-        });
+        .then(() => toast.success("Copied to clipboard", { position: "bottom-center", duration: 2000, icon: "📋" }))
+        .catch(() => toast.error("Failed to copy text", { position: "bottom-center", duration: 2000, icon: "❌" }));
     } else {
-      toast.error("No text to copy", {
-        position: "bottom-center",
-        duration: 2000,
-        icon: "❌",
-      });
+      toast.error("Failed to copy text", { position: "bottom-center", duration: 2000, icon: "❌" });
     }
   };
 
@@ -131,11 +120,15 @@ const Generator = () => {
           <span className="loading loading-spinner loading-lg"></span>
         </div>
       )}
-      <form className="form py-6 px-4 mx-auto max-w-xl space-y-6" onSubmit={handleSubmit} aria-labelledby="generator-title">
+      <form
+        className="form py-6 px-4 mx-auto max-w-xl space-y-6"
+        onSubmit={handleSubmit}
+        aria-labelledby="generator-title"
+      >
         <div id="generator-title" className="sr-only">
           Lorem Ipsum Generator
         </div>
-      <div className="flex flex-col gap-4 mb-4">
+        <div className="flex flex-col gap-4 mb-4">
           <div className="form-control">
             <label htmlFor="keywords" className="label mb-1 mr-2">
               <span className="label-text text-primary">Keywords</span>
@@ -238,7 +231,10 @@ const Generator = () => {
       <div className="w-full">
         <div className="bg-base-200 rounded-lg p-6 mb-4 min-h-[200px]">
           {ipsumText ? (
-            <pre className="whitespace-pre-wrap break-words">{ipsumText}</pre>
+            <pre
+              className="whitespace-pre-wrap break-words"
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(ipsumText) }}
+            />
           ) : (
             <p className="text-gray-500 text-center">Enter keywords and generate your custom Lorem Ipsum.</p>
           )}
