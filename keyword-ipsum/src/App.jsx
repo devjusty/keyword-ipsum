@@ -1,4 +1,4 @@
-import bookLogo from "/bx-book-open.svg";
+import bookLogo from "./assets/bx-book-open.svg";
 import "./App.css";
 import Generator from "./components/Generator";
 
