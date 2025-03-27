@@ -13,6 +13,7 @@
     "name": "Justin Thompson",
     "email": "devjusty@gmail.com"
   },
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
