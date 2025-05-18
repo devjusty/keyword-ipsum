@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from "react";
 import { z } from "zod";
 import DOMPurify from "dompurify";
 import toast, { Toaster } from "react-hot-toast";
+import ChipInput from './ChipInput';
 
 import { generateIpsum } from "../utils/generatorLogic";
 import { logError } from "../utils/errorLogging";
@@ -82,7 +83,7 @@ const useSynonymFetcher = () => {
 
 const Generator = () => {
   const [ipsumText, setIpsumText] = useState("");
-  const [keywords, setKeywords] = useState("");
+  const [keywords, setKeywords] = useState([]);
   const [useSynonyms, setUseSynonyms] = useState(false);
   const [length, setLength] = useState(5);
   const [unit, setUnit] = useState("sentences");
@@ -90,8 +91,7 @@ const Generator = () => {
   // Custom hook for synonym fetching and caching
   const { fetchSynonyms, synonymsCache, isLoadingSynonyms } = useSynonymFetcher();
 
-  const validateKeywords = useCallback((keywordInput) => {
-    const keywordList = keywordInput.split(/[,\s]+/).filter(Boolean);
+  const validateKeywords = useCallback((keywordList) => {
     const errors = [];
 
     if (keywordList.length === 0) {
@@ -117,12 +117,12 @@ const Generator = () => {
   //     .flatMap((keyword) => [keyword, ...(synonymsCache[keyword] || [])]);
   // }, [keywords, synonymsCache, useSynonyms]);
   const processedKeywords = useMemo(() => {
-    return keywords.split(/[,\s]+/).filter(Boolean);
+    return keywords.filter(Boolean);
   }, [keywords]);
 
-  const handleKeywordChange = (event) => {
-    setKeywords(event.target.value);
-  };
+  // const handleKeywordChange = (event) => {
+  //   setKeywords(event.target.value);
+  // };
 
   const handleUnitChange = (event) => {
     setUnit(event.target.value);
@@ -163,7 +163,7 @@ const Generator = () => {
       // Fetch synonyms if enabled
       if (useSynonyms) {
         const newSynonyms = await fetchSynonyms(keywordList);
-        finalKeywords = keywordList.flatMap((keyword) => [keyword, ...(newSynonyms[keyword] || [])]);
+        finalKeywords = keywords.flatMap((keyword) => [keyword, ...(newSynonyms[keyword] || [])]);
       }
 
       // Generate Ipsum text
@@ -227,21 +227,12 @@ const Generator = () => {
         </div>
         <div className="flex flex-col gap-4 mb-4">
           <div className="form-control">
-            <label htmlFor="keywords" className="label mb-1 mr-2">
-              <span className="label-text text-primary">Keywords</span>
-            </label>
-            <input
-              type="text"
+            <ChipInput
+              label="Keywords"
+              name="keywords"
               value={keywords}
-              id="keywords"
-              onChange={handleKeywordChange}
-              placeholder="awesome, radical, sick"
-              className="input input-bordered"
-              aria-describedby="keywords-hint"
-            />
-            <small id="keywords-hint" className="block text-gray-500 whitespace-nowrap">
-              Separate with commas
-            </small>
+              onChange={setKeywords}
+             />
           </div>
 
           <div className="form-control">

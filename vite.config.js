@@ -7,11 +7,11 @@ export default defineConfig({
   server: {
     headers: {
       // Commented out during dev
-      "Strict-Transport-Security": "max-age=86400; includeSubDomains",
-      "X-Content-Type-Options": "nosniff",
-      "X-Frame-Options": "SAMEORIGIN",
-      "X-XSS-Protection": "1; mode=block",
-      "Content-Security-Policy": "default-src 'self' https://api.datamuse.com; upgrade-insecure-requests",
+      // "Strict-Transport-Security": "max-age=86400; includeSubDomains",
+      // "X-Content-Type-Options": "nosniff",
+      // "X-Frame-Options": "SAMEORIGIN",
+      // "X-XSS-Protection": "1; mode=block",
+      // "Content-Security-Policy": "default-src 'self' https://api.datamuse.com; upgrade-insecure-requests",
     },
     // Add proxy configuration for local development
     proxy: {
@@ -24,6 +24,7 @@ export default defineConfig({
   },
   // Modify how CSP is handled in development
   define: {
+    // eslint-disable-next-line no-undef
     "import.meta.env.CSP_ENABLED": JSON.stringify(process.env.NODE_ENV !== "development"),
   },
 });
