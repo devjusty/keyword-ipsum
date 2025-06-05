@@ -8,7 +8,7 @@ export const trackPerformance = (label, operation) => {
         console.log(`${label} took ${endTime - startTime}ms`);
         return result;
       } catch (error) {
-        console.error(`Perfromance Tracking error in ${label}`, error);
+        console.error(`Performance Tracking error in ${label}`, error);
         throw error;
       }
     }
