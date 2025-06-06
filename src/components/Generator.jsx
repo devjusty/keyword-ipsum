@@ -1,12 +1,15 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, memo } from "react";
 import { z } from "zod";
 import DOMPurify from "dompurify";
 import toast, { Toaster } from "react-hot-toast";
-import ChipInput from './ChipInput';
+import ChipInput from "./ChipInput";
 
 import { generateIpsum } from "../utils/generatorLogic";
 import { logError } from "../utils/errorLogging";
 import { trackPerformance } from "../utils/performanceTracking";
+
+// Memoized Toaster component to prevent re-renders
+const MemoizedToaster = memo(Toaster);
 
 // Zod schema for API response validation
 const datamuseSchema = z.array(z.object({ word: z.string() }));
@@ -29,7 +32,9 @@ const useSynonymFetcher = () => {
           .filter((keyword) => !synonymsCache[keyword])
           .map(async (keyword) => {
             try {
-              const response = await fetch(`https://api.datamuse.com/words?rel_syn=${keyword}`);
+              const response = await fetch(
+                `https://api.datamuse.com/words?rel_syn=${keyword}`,
+              );
               if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
               }
@@ -40,7 +45,9 @@ const useSynonymFetcher = () => {
                 [keyword]: validData
                   .slice(0, 5)
                   .map((item) => item.word)
-                  .filter((word) => word.toLowerCase() !== keyword.toLowerCase()),
+                  .filter(
+                    (word) => word.toLowerCase() !== keyword.toLowerCase(),
+                  ),
               };
             } catch (error) {
               logError("Synonym Fetch", error, { keyword });
@@ -71,11 +78,15 @@ const useSynonymFetcher = () => {
       } catch (error) {
         logError("Synonym Fetching Main", error);
         setIsLoadingSynonyms(false);
-        toast.error("Failed to fetch synonyms", { position: "bottom-center", duration: 2000, icon: "❌" });
+        toast.error("Failed to fetch synonyms", {
+          position: "bottom-center",
+          duration: 2000,
+          icon: "❌",
+        });
         return {};
       }
     },
-    [synonymsCache]
+    [synonymsCache],
   );
 
   return { fetchSynonyms, synonymsCache, isLoadingSynonyms };
@@ -89,7 +100,8 @@ const Generator = () => {
   const [unit, setUnit] = useState("sentences");
 
   // Custom hook for synonym fetching and caching
-  const { fetchSynonyms, synonymsCache, isLoadingSynonyms } = useSynonymFetcher();
+  const { fetchSynonyms, synonymsCache, isLoadingSynonyms } =
+    useSynonymFetcher();
 
   const validateKeywords = useCallback((keywordList) => {
     const errors = [];
@@ -125,76 +137,112 @@ const Generator = () => {
   //   setKeywords(event.target.value);
   // };
 
-  const handleUnitChange = (event) => {
+  const handleUnitChange = useCallback((event) => {
     setUnit(event.target.value);
-  };
+  }, []);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = useCallback(
+    async (event) => {
+      event.preventDefault();
 
-    // Validate keywords
-    const { keywordList, errors } = validateKeywords(keywords);
+      // Validate keywords
+      const { keywordList, errors } = validateKeywords(keywords);
 
-    // Handle validation errors
-    if (errors.length > 0) {
-      for (const error of errors) toast.error(error, {
+      // Handle validation errors
+      if (errors.length > 0) {
+        for (const error of errors) {
+          toast.error(error, {
+            position: "bottom-center",
+            duration: 2000,
+            icon: "❌",
+          });
+        }
+        return;
+      }
+
+      // Validate length
+      const parsedLength = Number.parseInt(length, 10);
+      if (Number.isNaN(parsedLength) || parsedLength <= 0) {
+        toast.error("Please enter a positive number for length", {
           position: "bottom-center",
           duration: 2000,
           icon: "❌",
-        })
-      ;
-      return;
-    }
-
-    // Validate length
-    const parsedLength = Number.parseInt(length, 10);
-    if (Number.isNaN(parsedLength) || parsedLength <= 0) {
-      toast.error("Please enter a positive number for length", {
-        position: "bottom-center",
-        duration: 2000,
-        icon: "❌",
-      });
-      return;
-    }
-
-    try {
-      let finalKeywords = processedKeywords;
-
-      // Fetch synonyms if enabled
-      if (useSynonyms) {
-        const newSynonyms = await fetchSynonyms(keywordList);
-        finalKeywords = keywords.flatMap((keyword) => [keyword, ...(newSynonyms[keyword] || [])]);
+        });
+        return;
       }
 
-      // Generate Ipsum text
-      const generatedText = trackPerformance("Ipsum Generation", generateIpsum)(finalKeywords, parsedLength, unit);
-      // Sanitize and set text
-      const sanitizedText = DOMPurify.sanitize(generatedText);
-      setIpsumText(sanitizedText);
-    } catch {
-      toast.error("Failed to generate Ipsum text", {
+      try {
+        let finalKeywords = processedKeywords;
+
+        // Fetch synonyms if enabled
+        if (useSynonyms) {
+          const newSynonyms = await fetchSynonyms(keywordList);
+          finalKeywords = keywords.flatMap((keyword) => [
+            keyword,
+            ...(newSynonyms[keyword] || []),
+          ]);
+        }
+
+        // Generate Ipsum text
+        const generatedText = trackPerformance(
+          "Ipsum Generation",
+          generateIpsum,
+        )(finalKeywords, parsedLength, unit);
+
+        // Sanitize and set text
+        const sanitizedText = DOMPurify.sanitize(generatedText);
+        setIpsumText(sanitizedText);
+      } catch (error) {
+        logError("Ipsum Generation Error", error);
+        toast.error("Failed to generate Ipsum text", {
+          position: "bottom-center",
+          duration: 2000,
+          icon: "❌",
+        });
+      }
+    },
+    [
+      keywords,
+      length,
+      unit,
+      useSynonyms,
+      validateKeywords,
+      fetchSynonyms,
+      processedKeywords,
+    ],
+  );
+
+  // Memoized copy to clipboard handler
+  const handleCopyText = useCallback(() => {
+    if (!ipsumText) {
+      toast.error("No text to copy", {
         position: "bottom-center",
         duration: 2000,
         icon: "❌",
       });
-    }
-  };
-
-  // Copy text to clipboard
-  const handleCopyText = () => {
-    if (!ipsumText) {
-      toast.error("No text to copy", { position: "bottom-center", duration: 2000, icon: "❌" });
       return;
     }
     navigator.clipboard
       .writeText(ipsumText)
-      .then(() => toast.success("Copied to clipboard", { position: "bottom-center", duration: 2000, icon: "📋" }))
-      .catch(() => toast.error("Failed to copy text", { position: "bottom-center", duration: 2000, icon: "❌" }));
-  };
+      .then(() =>
+        toast.success("Copied to clipboard", {
+          position: "bottom-center",
+          duration: 2000,
+          icon: "📋",
+        }),
+      )
+      .catch(() =>
+        toast.error("Failed to copy text", {
+          position: "bottom-center",
+          duration: 2000,
+          icon: "❌",
+        }),
+      );
+  }, [ipsumText]);
 
-  // Render text count based on selected unit
-  const renderTextCount = () => {
-    if (!ipsumText) return;
+  // Memoized text count calculation
+  const textCount = useMemo(() => {
+    if (!ipsumText) return "";
 
     switch (unit) {
       case "words": {
@@ -206,12 +254,15 @@ const Generator = () => {
       case "paragraphs": {
         return `Paragraphs: ${ipsumText.split(/\n{2,}/).filter(Boolean).length}`;
       }
+      default: {
+        return "";
+      }
     }
-  };
+  }, [ipsumText, unit]);
 
   return (
     <>
-      <Toaster />
+      <MemoizedToaster />
 
       {/* Loading overlay for synonym fetching */}
       {isLoadingSynonyms && (
@@ -235,7 +286,7 @@ const Generator = () => {
               name="keywords"
               value={keywords}
               onChange={setKeywords}
-             />
+            />
           </div>
 
           <div className="form-control">
@@ -295,14 +346,17 @@ const Generator = () => {
           </div>
 
           <div className="form-control flex flex-col gap-4 w-full">
-            <label className="label cursor-pointer py-2 mb-1" htmlFor='use-synonyms'>
+            <label
+              className="label cursor-pointer py-2 mb-1"
+              htmlFor="use-synonyms"
+            >
               <span className="label-text text-primary mr-2">Add Synonyms</span>
               <input
                 type="checkbox"
                 className="toggle"
                 checked={useSynonyms}
                 onChange={() => setUseSynonyms(!useSynonyms)}
-                id='use-synonyms'
+                id="use-synonyms"
               />
             </label>
 
@@ -326,14 +380,19 @@ const Generator = () => {
       <div className="w-full px-4">
         <div className="bg-base-200 rounded-lg p-6 mb-4 min-h-[200px]">
           {ipsumText ? (
-            <pre className="whitespace-pre-wrap break-words" dangerouslySetInnerHTML={{ __html: ipsumText }} />
+            <pre
+              className="whitespace-pre-wrap break-words"
+              dangerouslySetInnerHTML={{ __html: ipsumText }}
+            />
           ) : (
-            <p className="text-gray-500 text-center">Enter keywords and generate your custom Lorem Ipsum.</p>
+            <p className="text-gray-500 text-center">
+              Enter keywords and generate your custom Lorem Ipsum.
+            </p>
           )}
         </div>
 
         <div className="flex justify-between items-center px-1">
-          <div className="text-sm text-gray-500">{renderTextCount()}</div>
+          <div className="text-sm text-gray-500">{textCount}</div>
           <button
             className="btn btn-secondary"
             onClick={handleCopyText}

@@ -1,105 +1,178 @@
-const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+// Constants
+const LOREM_IPSUM_WORDS = Object.freeze([
+  "Lorem",
+  "ipsum",
+  "dolor",
+  "sit",
+  "amet",
+  "consectetur",
+  "adipiscing",
+  "elit",
+  "sed",
+  "do",
+  "eiusmod",
+  "tempor",
+  "incididunt",
+  "ut",
+  "labore",
+  "et",
+  "dolore",
+  "magna",
+  "aliqua",
+  "Ut",
+  "enim",
+  "ad",
+  "minim",
+  "veniam",
+  "quis",
+  "nostrud",
+  "exercitation",
+  "ullamco",
+  "laboris",
+  "nisi",
+  "ut",
+  "aliquip",
+  "ex",
+  "ea",
+  "commodo",
+  "consequat",
+  "Duis",
+  "aute",
+  "irure",
+  "dolor",
+  "in",
+  "reprehenderit",
+  "in",
+  "voluptate",
+  "velit",
+  "esse",
+  "cillum",
+  "dolore",
+  "eu",
+  "fugiat",
+  "nulla",
+  "pariatur",
+  "Excepteur",
+  "sint",
+  "occaecat",
+  "cupidatat",
+  "non",
+  "proident",
+  "sunt",
+  "in",
+  "culpa",
+  "qui",
+  "officia",
+  "deserunt",
+  "mollit",
+  "anim",
+  "id",
+  "est",
+  "laborum",
+]);
 
-export function generateIpsum(keywords, length, unit) {
-  const loremIpsumWords = [
-    "Lorem",
-    "ipsum",
-    "dolor",
-    "sit",
-    "amet",
-    "consectetur",
-    "adipiscing",
-    "elit",
-    "sed",
-    "do",
-    "eiusmod",
-    "tempor",
-    "incididunt",
-    "ut",
-    "labore",
-    "et",
-    "dolore",
-    "magna",
-    "aliqua",
-    "Ut",
-    "enim",
-    "ad",
-    "minim",
-    "veniam",
-    "quis",
-    "nostrud",
-    "exercitation",
-    "ullamco",
-    "laboris",
-    "nisi",
-    "ut",
-    "aliquip",
-    "ex",
-    "ea",
-    "commodo",
-    "consequat",
-    "Duis",
-    "aute",
-    "irure",
-    "dolor",
-    "in",
-    "reprehenderit",
-    "in",
-    "voluptate",
-    "velit",
-    "esse",
-    "cillum",
-    "dolore",
-    "eu",
-    "fugiat",
-    "nulla",
-    "pariatur",
-    "Excepteur",
-    "sint",
-    "occaecat",
-    "cupidatat",
-    "non",
-    "proident",
-    "sunt",
-    "in",
-    "culpa",
-    "qui",
-    "officia",
-    "deserunt",
-    "mollit",
-    "anim",
-    "id",
-    "est",
-    "laborum",
-  ];
+const SENTENCE_WORD_COUNT = { min: 3, max: 15 };
+const PARAGRAPH_SENTENCE_COUNT = { min: 1, max: 7 };
 
-  const randomWord = () => {
-    if (Math.random() > 0.7 && keywords.length > 0) {
-      return keywords[Math.floor(Math.random() * keywords.length)];
-    }
-    return loremIpsumWords[Math.floor(Math.random() * loremIpsumWords.length)];
-  };
-
-  const randomSentence = (wordCount = getRandomInt(3, 15)) => {
-    const words = Array.from({ length: wordCount }, randomWord);
-    const sentence = words.join(" ");
-    return sentence.charAt(0).toUpperCase() + sentence.slice(1) + ".";
-  };
-
-  const randomParagraph = (sentenceCount = getRandomInt(1, 7)) =>
-    Array.from({ length: sentenceCount }, () => randomSentence()).join(" ");
-
-  if (unit === "words") {
-    return Array.from({ length }, randomWord).join(" ");
-  }
-
-  if (unit === "sentences") {
-    return Array.from({ length }, () => randomSentence()).join(" ");
-  }
-
-  if (unit === "paragraphs") {
-    return Array.from({ length }, () => randomParagraph()).join("\n\n");
-  }
-
-  return "";
+/**
+ * Fast random number generator using xorshift32 algorithm
+ */
+let seed = Date.now();
+function fastRandom() {
+  seed ^= seed << 13;
+  seed ^= seed >>> 17;
+  seed ^= seed << 5;
+  return (seed >>> 0) / 0x1_00_00_00_00; // Convert to float in [0, 1)
 }
+
+/**
+ * Get a random integer between min and max (inclusive)
+ */
+const getRandomInt = (min, max) => {
+  return Math.floor(fastRandom() * (max - min + 1)) + min;
+};
+
+/**
+ * Generate a sequence of random words
+ */
+const generateIpsum = (keywords, length, unit) => {
+  // Reset seed for deterministic results with the same input
+  seed =
+    keywords.length > 0
+      ? keywords.reduce(
+          (accumulator, word) => accumulator + word.codePointAt(0),
+          0,
+        )
+      : Date.now();
+
+  // Pre-calculate word selection probabilities
+  const keywordProbability = 0.3; // 30% chance to select a keyword
+  const hasKeywords = keywords.length > 0;
+  const loremWordsLength = LOREM_IPSUM_WORDS.length;
+  const keywordsLength = keywords.length;
+
+  // Optimized random word generator
+  const getRandomWord = () => {
+    if (hasKeywords && fastRandom() < keywordProbability) {
+      return keywords[Math.floor(fastRandom() * keywordsLength)];
+    }
+    return LOREM_IPSUM_WORDS[Math.floor(fastRandom() * loremWordsLength)];
+  };
+
+  // Generate sentence with specified word count
+  const generateSentence = (wordCount) => {
+    let sentence = "";
+    for (let index = 0; index < wordCount; index++) {
+      if (index > 0) sentence += " ";
+      sentence +=
+        index === 0
+          ? getRandomWord().charAt(0).toUpperCase() + getRandomWord().slice(1)
+          : getRandomWord();
+    }
+    return sentence + ".";
+  };
+
+  // Generate paragraph with specified sentence count
+  const generateParagraph = (sentenceCount) => {
+    let paragraph = "";
+    for (let index = 0; index < sentenceCount; index++) {
+      if (index > 0) paragraph += " ";
+      paragraph += generateSentence(
+        getRandomInt(SENTENCE_WORD_COUNT.min, SENTENCE_WORD_COUNT.max),
+      );
+    }
+    return paragraph;
+  };
+
+  // Generate content based on unit type
+  switch (unit) {
+    case "words": {
+      return Array.from({ length }, getRandomWord).join(" ");
+    }
+
+    case "sentences": {
+      return Array.from({ length }, () =>
+        generateSentence(
+          getRandomInt(SENTENCE_WORD_COUNT.min, SENTENCE_WORD_COUNT.max),
+        ),
+      ).join(" ");
+    }
+
+    case "paragraphs": {
+      return Array.from({ length }, () =>
+        generateParagraph(
+          getRandomInt(
+            PARAGRAPH_SENTENCE_COUNT.min,
+            PARAGRAPH_SENTENCE_COUNT.max,
+          ),
+        ),
+      ).join("\n\n");
+    }
+
+    default: {
+      return "";
+    }
+  }
+};
+
+export { generateIpsum };
