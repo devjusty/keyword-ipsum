@@ -1,4 +1,5 @@
 // Constants
+// cSpell: disable
 const LOREM_IPSUM_WORDS = Object.freeze([
   "Lorem",
   "ipsum",
@@ -70,6 +71,7 @@ const LOREM_IPSUM_WORDS = Object.freeze([
   "est",
   "laborum",
 ]);
+// cSpell: enable
 
 const SENTENCE_WORD_COUNT = { min: 3, max: 15 };
 const PARAGRAPH_SENTENCE_COUNT = { min: 1, max: 7 };

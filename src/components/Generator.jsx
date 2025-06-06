@@ -2,11 +2,10 @@ import { useState, useCallback, useMemo, memo } from "react";
 import { z } from "zod";
 import DOMPurify from "dompurify";
 import toast, { Toaster } from "react-hot-toast";
-import ChipInput from "./ChipInput";
-
 import { generateIpsum } from "../utils/generatorLogic";
 import { logError } from "../utils/errorLogging";
 import { trackPerformance } from "../utils/performanceTracking";
+import ChipInput from "./ChipInput";
 
 // Memoized Toaster component to prevent re-renders
 const MemoizedToaster = memo(Toaster);
@@ -97,7 +96,7 @@ const Generator = () => {
   const [keywords, setKeywords] = useState([]);
   const [useSynonyms, setUseSynonyms] = useState(false);
   const [length, setLength] = useState(5);
-  const [unit, setUnit] = useState("sentences");
+  const [unit, setUnit] = useState("paragraphs");
 
   // Custom hook for synonym fetching and caching
   const { fetchSynonyms, synonymsCache, isLoadingSynonyms } =
@@ -271,59 +270,94 @@ const Generator = () => {
         </div>
       )}
 
-      <form
-        className="form py-6 px-4 mx-auto max-w-xl space-y-6"
-        onSubmit={handleSubmit}
-        aria-labelledby="generator-title"
-      >
-        <div id="generator-title" className="sr-only">
-          Lorem Ipsum Generator
-        </div>
-        <div className="flex flex-col gap-4 mb-4">
-          <div className="form-control">
-            <ChipInput
-              label="Keywords"
-              name="keywords"
-              value={keywords}
-              onChange={setKeywords}
-            />
-          </div>
+      <div className="card bg-base-100 shadow-xl mx-auto max-w-2xl">
+        <div className="card-body p-6 md:p-8">
+          <form
+            className="space-y-6"
+            onSubmit={handleSubmit}
+            aria-labelledby="generator-title"
+          >
+            <h2
+              id="generator-title"
+              className="card-title text-2xl font-bold mb-2"
+            >
+              Lorem Ipsum Generator
+            </h2>
 
-          <div className="form-control">
-            <label className="label mb-1 mr-2" htmlFor="length">
-              <span className="label-text text-primary">Length</span>
-            </label>
-            <input
-              type="number"
-              id="length"
-              min={1}
-              value={length}
-              onChange={(event) => setLength(event.target.value)}
-              className="input input-bordered"
-            />
-          </div>
-        </div>
+            {/* Keywords and Toggle Row */}
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <ChipInput
+                  label="Keywords"
+                  name="keywords"
+                  value={keywords}
+                  onChange={setKeywords}
+                  placeholder="Type and press Enter"
+                  maxChips={10}
+                />
+              </div>
 
-        <div className="flex flex-col gap-4 mb-6">
-          <div className="form-control max-w-xs w-full">
-            <div role="radiogroup" aria-labelledby="units-label">
-              <span id="units-label" className="sr-only">
-                Select text generation units
-              </span>
-              <label className="label mb-1">
-                <span className="label-text text-primary mr-2">Units</span>
-                <div className="join">
+              <div className="flex flex-col items-center">
+                <label
+                  className="block text-sm font-medium mb-2 text-accent"
+                  htmlFor="use-synonyms"
+                >
+                  Add Synonyms
+                </label>
+                <div className="">
                   <input
-                    className="join-item btn btn-sm w-1/3"
+                    type="checkbox"
+                    className="toggle toggle-primary toggle-lg mt-2"
+                    checked={useSynonyms}
+                    onChange={() => setUseSynonyms(!useSynonyms)}
+                    id="use-synonyms"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Controls Row */}
+            <div className="flex flex-col sm:flex-row gap-4 items-end">
+              {/* Length Input */}
+              <div className="form-control w-full sm:max-w-[120px]">
+                <label className="label pb-1" htmlFor="length">
+                  <span className="label-text font-medium mb-2 text-accent">
+                    Length
+                  </span>
+                </label>
+                <input
+                  type="number"
+                  id="length"
+                  min={1}
+                  value={length}
+                  onChange={(event) => setLength(event.target.value)}
+                  className="input input-bordered w-full"
+                />
+              </div>
+
+              {/* Unit Selector */}
+              <div className="form-control w-full">
+                <label className="label pb-1" htmlFor="units">
+                  <span className="label-text font-medium mb-2 text-accent">
+                    Units
+                  </span>
+                </label>
+                <div
+                  className="join w-full"
+                  role="radiogroup"
+                  aria-labelledby="units-label"
+                >
+                  <input
+                    className="join-item btn flex-1"
                     type="radio"
-                    value="words"
-                    checked={unit === "words"}
+                    value="paragraphs"
+                    checked={unit === "paragraphs"}
                     name="units"
-                    aria-label="Words"
+                    aria-label="Paragraphs"
                     onChange={handleUnitChange}
                   />
                   <input
-                    className="join-item btn btn-sm w-1/3"
+                    className="join-item btn flex-1"
                     type="radio"
                     value="sentences"
                     checked={unit === "sentences"}
@@ -332,77 +366,100 @@ const Generator = () => {
                     onChange={handleUnitChange}
                   />
                   <input
-                    className="join-item btn btn-sm w-1/3"
+                    className="join-item btn flex-1"
                     type="radio"
-                    value="paragraphs"
-                    checked={unit === "paragraphs"}
+                    value="words"
+                    checked={unit === "words"}
                     name="units"
-                    aria-label="Paragraphs"
+                    aria-label="Words"
                     onChange={handleUnitChange}
                   />
                 </div>
-              </label>
+              </div>
             </div>
-          </div>
 
-          <div className="form-control flex flex-col gap-4 w-full">
-            <label
-              className="label cursor-pointer py-2 mb-1"
-              htmlFor="use-synonyms"
-            >
-              <span className="label-text text-primary mr-2">Add Synonyms</span>
-              <input
-                type="checkbox"
-                className="toggle"
-                checked={useSynonyms}
-                onChange={() => setUseSynonyms(!useSynonyms)}
-                id="use-synonyms"
-              />
-            </label>
+            {/* Submit Button */}
+            <div className="pt-2">
+              <button
+                type="submit"
+                className="btn btn-primary w-full md:w-auto min-w-[200px]"
+              >
+                Generate Ipsum
+              </button>
+            </div>
 
-            <button type="submit" className="btn btn-primary mx-auto">
-              Make My Ipsum
-            </button>
-          </div>
-        </div>
-
-        {/* Synonym status display */}
-        {useSynonyms && (
-          <div className="text-sm text-gray-500 mt-2">
-            {isLoadingSynonyms
-              ? "Fetching synonyms..."
-              : `Synonyms loaded for ${Object.keys(synonymsCache).length} keyword(s)`}
-          </div>
-        )}
-      </form>
-
-      {/* Result display section */}
-      <div className="w-full px-4">
-        <div className="bg-base-200 rounded-lg p-6 mb-4 min-h-[200px]">
-          {ipsumText ? (
-            <pre
-              className="whitespace-pre-wrap break-words"
-              dangerouslySetInnerHTML={{ __html: ipsumText }}
-            />
-          ) : (
-            <p className="text-gray-500 text-center">
-              Enter keywords and generate your custom Lorem Ipsum.
-            </p>
-          )}
-        </div>
-
-        <div className="flex justify-between items-center px-1">
-          <div className="text-sm text-gray-500">{textCount}</div>
-          <button
-            className="btn btn-secondary"
-            onClick={handleCopyText}
-            disabled={!ipsumText}
-            aria-label="Copy Ipsum text"
-          >
-            Copy My Ipsum
-          </button>
+            {/* Synonym status display */}
+            {useSynonyms && (
+              <div className="text-sm text-base-content/60 text-center">
+                {isLoadingSynonyms ? (
+                  <span className="inline-flex items-center gap-2">
+                    <span className="loading loading-spinner loading-xs"></span>
+                    Fetching synonyms...
+                  </span>
+                ) : (
+                  `Synonyms loaded for ${Object.keys(synonymsCache).length} keyword(s)`
+                )}
+              </div>
+            )}
+          </form>
         </div>
       </div>
+
+      {/* Result display section */}
+      {ipsumText && (
+        <div className="card bg-base-100 shadow-xl mx-auto max-w-2xl mt-8">
+          <div className="card-body p-6 md:p-8">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Generated Text</h3>
+              <div className="badge badge-ghost">{textCount}</div>
+            </div>
+
+            <div className="bg-base-200 rounded-box p-6 min-h-[200px] overflow-auto">
+              <pre className="whitespace-pre-wrap break-words font-sans">
+                {ipsumText}
+              </pre>
+            </div>
+
+            <div className="card-actions justify-end mt-4">
+              <button
+                className="btn btn-outline btn-sm"
+                onClick={handleCopyText}
+                disabled={!ipsumText}
+                aria-label="Copy Ipsum text"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 mr-2"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
+                  />
+                </svg>
+                Copy to Clipboard
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Empty state */}
+      {!ipsumText && (
+        <div className="card bg-base-100 shadow-xl mx-auto max-w-2xl mt-8">
+          <div className="card-body items-center text-center p-8">
+            <div className="text-5xl mb-4">📝</div>
+            <h3 className="text-lg font-medium mb-2">Your Ipsum Awaits</h3>
+            <p className="text-base-content/60 mb-4">
+              Enter your keywords and generate custom Lorem Ipsum text.
+            </p>
+          </div>
+        </div>
+      )}
     </>
   );
 };

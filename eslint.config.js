@@ -3,9 +3,9 @@ import globals from "globals";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
-import unicornPlugin from "eslint-plugin-unicorn"
-import jsxA11yPlugin from "eslint-plugin-jsx-a11y"
-import sonarjsPlugin from "eslint-plugin-sonarjs"
+import unicornPlugin from "eslint-plugin-unicorn";
+import jsxA11yPlugin from "eslint-plugin-jsx-a11y";
+import sonarjsPlugin from "eslint-plugin-sonarjs";
 
 export default [
   { ignores: ["dist", "node_modules"] },
@@ -30,8 +30,8 @@ export default [
     },
     settings: {
       react: {
-        version: "detect"
-      }
+        version: "detect",
+      },
     },
     rules: {
       ...js.configs.recommended.rules,
@@ -41,12 +41,16 @@ export default [
       ...jsxA11yPlugin.configs.recommended.rules,
       ...unicornPlugin.configs.recommended.rules,
       ...sonarjsPlugin.configs.recommended.rules,
-      "react/jsx-no-target-blank": "off",
+
       "no-unused-vars": ["error", { varsIgnorePattern: "^[A-Z_]" }],
-      "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
 
       // React
       "react/prop-types": "off",
+      "react/jsx-no-target-blank": "off",
+      "react-refresh/only-export-components": [
+        "warn",
+        { allowConstantExport: true },
+      ],
 
       // Unicorn Plugin Rules
       "unicorn/filename-case": "off",
