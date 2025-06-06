@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React, { useState } from 'react';
 import { CircleX } from 'lucide-react';
 
@@ -11,12 +10,11 @@ function ChipInput({label = 'Keywords', name, value, onChange}) {
     onChange(updatedChips);
   }
 
-  function handleKeyDown(e) {
+  function handleKeyDown(event) {
     const trimmed = text.trim();
 
-    if (e.key === 'Enter' || e.key === ',' && trimmed) {
-      e.preventDefault();
-      if (!trimmed) return;
+    if ((event.key === 'Enter' || event.key === ',') && trimmed) {
+      event.preventDefault();
 
       if (value.includes(trimmed)) {
         setValidationError('Duplicate entry');
@@ -27,7 +25,7 @@ function ChipInput({label = 'Keywords', name, value, onChange}) {
       }
     }
 
-    if (e.key === 'Backspace' && text === '') {
+    if (event.key === 'Backspace' && text === '') {
       onChange(value.slice(0, -1));
     }
   }
@@ -58,7 +56,7 @@ return (
         name={name}
         type="text"
         value={text}
-        onChange={(e) => setText(e.target.value)}
+        onChange={(event) => setText(event.target.value)}
         onKeyDown={handleKeyDown}
         placeholder={value.length === 0 ? "Type and press enter or comma" : ""}
         className="min-w-[8ch] flex-shrink bg-transparent outline-none text-sm text-white placeholder:text-gray-300"

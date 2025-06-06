@@ -52,17 +52,17 @@ const useSynonymFetcher = () => {
         const results = await Promise.all(synonymPromises);
 
         // Merge results into cache
-        results.forEach((result) => {
+        for (const result of results) {
           if (result && typeof result === "object") {
-            Object.entries(result).forEach(([keyword, synonyms]) => {
+            for (const [keyword, synonyms] of Object.entries(result)) {
               newSynonyms[keyword] = synonyms;
-            });
+            }
           }
-        });
+        }
 
         // Update cache
-        setSynonymsCache((prev) => ({
-          ...prev,
+        setSynonymsCache((previous) => ({
+          ...previous,
           ...newSynonyms,
         }));
 
@@ -116,6 +116,7 @@ const Generator = () => {
   //     .filter(Boolean)
   //     .flatMap((keyword) => [keyword, ...(synonymsCache[keyword] || [])]);
   // }, [keywords, synonymsCache, useSynonyms]);
+
   const processedKeywords = useMemo(() => {
     return keywords.filter(Boolean);
   }, [keywords]);
@@ -128,27 +129,26 @@ const Generator = () => {
     setUnit(event.target.value);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
     // Validate keywords
     const { keywordList, errors } = validateKeywords(keywords);
 
     // Handle validation errors
     if (errors.length > 0) {
-      errors.forEach((error) =>
-        toast.error(error, {
+      for (const error of errors) toast.error(error, {
           position: "bottom-center",
           duration: 2000,
           icon: "❌",
         })
-      );
+      ;
       return;
     }
 
     // Validate length
-    const parsedLength = parseInt(length, 10);
-    if (isNaN(parsedLength) || parsedLength <= 0) {
+    const parsedLength = Number.parseInt(length, 10);
+    if (Number.isNaN(parsedLength) || parsedLength <= 0) {
       toast.error("Please enter a positive number for length", {
         position: "bottom-center",
         duration: 2000,
@@ -194,15 +194,18 @@ const Generator = () => {
 
   // Render text count based on selected unit
   const renderTextCount = () => {
-    if (!ipsumText) return null;
+    if (!ipsumText) return;
 
     switch (unit) {
-      case "words":
+      case "words": {
         return `Words: ${ipsumText.split(/\s+/).length}`;
-      case "sentences":
+      }
+      case "sentences": {
         return `Sentences: ${ipsumText.split(/[.!?]+/).filter(Boolean).length}`;
-      case "paragraphs":
+      }
+      case "paragraphs": {
         return `Paragraphs: ${ipsumText.split(/\n{2,}/).filter(Boolean).length}`;
+      }
     }
   };
 
@@ -244,7 +247,7 @@ const Generator = () => {
               id="length"
               min={1}
               value={length}
-              onChange={(e) => setLength(e.target.value)}
+              onChange={(event) => setLength(event.target.value)}
               className="input input-bordered"
             />
           </div>

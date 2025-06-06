@@ -9,6 +9,6 @@ export const logError = (context, error, additionalInfo = {}) => {
   };
 
   if (import.meta.env.MODE === "development") {
-    console.error(JSON.stringify(errorLog, null, 2));
+    console.error(JSON.stringify(errorLog, undefined, 2));
   }
 }

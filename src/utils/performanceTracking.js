@@ -1,9 +1,9 @@
 export const trackPerformance = (label, operation) => {
-  return (...args) => {
+  return (...arguments_) => {
     if (import.meta.env.MODE === "development") {
       const startTime = performance.now();
       try {
-        const result = operation(...args);
+        const result = operation(...arguments_);
         const endTime = performance.now();
         console.log(`${label} took ${endTime - startTime}ms`);
         return result;
@@ -12,6 +12,6 @@ export const trackPerformance = (label, operation) => {
         throw error;
       }
     }
-    return operation(...args);
+    return operation(...arguments_);
   };
 };

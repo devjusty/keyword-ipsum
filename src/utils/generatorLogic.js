@@ -1,3 +1,5 @@
+const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
 export function generateIpsum(keywords, length, unit) {
   const loremIpsumWords = [
     "Lorem",
@@ -70,9 +72,6 @@ export function generateIpsum(keywords, length, unit) {
     "est",
     "laborum",
   ];
-
-  const getRandomInt = (min, max) =>
-    Math.floor(Math.random() * (max - min + 1)) + min;
 
   const randomWord = () => {
     if (Math.random() > 0.7 && keywords.length > 0) {
