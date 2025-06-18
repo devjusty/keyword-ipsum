@@ -42,7 +42,7 @@
     "react-dom": "^19.1.0",
     "react-ga4": "^2.1.0",
     "react-hot-toast": "^2.5.2",
-    "zod": "^3.25.52"
+    "zod": "^3.25.65"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.9",
