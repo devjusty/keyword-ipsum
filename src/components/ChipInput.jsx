@@ -13,12 +13,12 @@ function ChipInput({
   const [isFocused, setIsFocused] = useState(false);
   const inputReference = useRef(null);
 
-  // Focus the input when the component mounts or when chips change
+  // Focus the input when the component mounts
   useEffect(() => {
     if (inputReference.current) {
       inputReference.current.focus();
     }
-  }, [value]);
+  }, []);
 
   const addChip = (chipText) => {
     const trimmed = chipText.trim();

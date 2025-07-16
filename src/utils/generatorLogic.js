@@ -97,7 +97,13 @@ const getRandomInt = (min, max) => {
 /**
  * Generate a sequence of random words
  */
-const generateIpsum = (keywords, length, unit) => {
+const generateIpsum = (
+  keywords,
+  length,
+  unit,
+  // eslint-disable-next-line unicorn/no-object-as-default-parameter
+  options = { startWithLorem: true, keywordProbability: 0.3 },
+) => {
   // Reset seed for deterministic results with the same input
   seed =
     keywords.length > 0
@@ -108,7 +114,7 @@ const generateIpsum = (keywords, length, unit) => {
       : Date.now();
 
   // Pre-calculate word selection probabilities
-  const keywordProbability = 0.3; // 30% chance to select a keyword
+  const { keywordProbability } = options;
   const hasKeywords = keywords.length > 0;
   const loremWordsLength = LOREM_IPSUM_WORDS.length;
   const keywordsLength = keywords.length;
@@ -146,22 +152,26 @@ const generateIpsum = (keywords, length, unit) => {
     return paragraph;
   };
 
+  let text = "";
+
   // Generate content based on unit type
   switch (unit) {
     case "words": {
-      return Array.from({ length }, getRandomWord).join(" ");
+      text = Array.from({ length }, getRandomWord).join(" ");
+      break;
     }
 
     case "sentences": {
-      return Array.from({ length }, () =>
+      text = Array.from({ length }, () =>
         generateSentence(
           getRandomInt(SENTENCE_WORD_COUNT.min, SENTENCE_WORD_COUNT.max),
         ),
       ).join(" ");
+      break;
     }
 
     case "paragraphs": {
-      return Array.from({ length }, () =>
+      text = Array.from({ length }, () =>
         generateParagraph(
           getRandomInt(
             PARAGRAPH_SENTENCE_COUNT.min,
@@ -169,12 +179,19 @@ const generateIpsum = (keywords, length, unit) => {
           ),
         ),
       ).join("\n\n");
+      break;
     }
 
     default: {
       return "";
     }
   }
+
+  if (options.startWithLorem) {
+    return `${LOREM_IPSUM_WORDS.slice(0, 5).join(" ")} ${text}`;
+  }
+
+  return text;
 };
 
 export { generateIpsum };
