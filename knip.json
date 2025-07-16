@@ -1,0 +1,21 @@
+{
+  "entry": ["src/main.jsx"],
+  "project": ["src/**/*.js", "src/**/*.jsx"],
+  "ignore": [
+    "node_modules",
+    "dist",
+    "build",
+    "public",
+    "*.config.js",
+    "*.config.mjs",
+    ".*.js",
+    "src/assets/**",
+    "src/utils/errorLogging.js",
+    "src/utils/performanceTracking.js"
+  ],
+  "ignoreDependencies": [
+    "tailwindcss",
+    "daisyui",
+    "eslint-plugin-react-refresh"
+  ]
+}

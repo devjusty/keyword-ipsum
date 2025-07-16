@@ -6,6 +6,8 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import unicornPlugin from "eslint-plugin-unicorn";
 import jsxA11yPlugin from "eslint-plugin-jsx-a11y";
 import sonarjsPlugin from "eslint-plugin-sonarjs";
+import prettierPlugin from "eslint-config-prettier";
+import importPlugin from "eslint-plugin-import";
 
 export default [
   { ignores: ["dist", "node_modules"] },
@@ -27,6 +29,8 @@ export default [
       "jsx-a11y": jsxA11yPlugin,
       unicorn: unicornPlugin,
       sonarjs: sonarjsPlugin,
+      prettier: prettierPlugin,
+      import: importPlugin,
     },
     settings: {
       react: {
@@ -41,7 +45,6 @@ export default [
       ...jsxA11yPlugin.configs.recommended.rules,
       ...unicornPlugin.configs.recommended.rules,
       ...sonarjsPlugin.configs.recommended.rules,
-
       "no-unused-vars": ["error", { varsIgnorePattern: "^[A-Z_]" }],
 
       // React
@@ -60,4 +63,5 @@ export default [
       "sonarjs/pseudo-random": "off",
     },
   },
+  prettierPlugin,
 ];

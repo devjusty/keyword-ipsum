@@ -1,4 +1,3 @@
-import "./App.css";
 import { BookOpen } from "lucide-react";
 import Generator from "./components/Generator";
 
