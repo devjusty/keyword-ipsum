@@ -4,7 +4,11 @@ import ReactGA from "react-ga4";
 import App from "./App.jsx";
 import "./index.css";
 
-ReactGA.initialize("G-6N3YKMQC57");
+// Initialize Google Analytics only if tracking ID is provided
+const gaTrackingId = import.meta.env.VITE_GA_TRACKING_ID;
+if (gaTrackingId) {
+  ReactGA.initialize(gaTrackingId);
+}
 
 ReactDOM.createRoot(document.querySelector("#root")).render(
   <React.StrictMode>

@@ -30,6 +30,13 @@ This project is deployed via **Netlify**.
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/04ef2661-adfe-41a8-9579-b75f454245d3/deploy-status)](https://app.netlify.com/sites/keywordipsum/deploys)
 
+### Netlify Environment Variables
+
+To enable Google Analytics on production, set the following environment variable in your Netlify dashboard:
+
+- Navigate to **Site settings → Environment variables**
+- Add `VITE_GA_TRACKING_ID` with your Google Analytics tracking ID
+
 ## Installation
 
 ```bash
@@ -42,9 +49,21 @@ $ cd keyword-ipsum
 # Install dependencies
 $ pnpm install
 
+# Set up environment variables (optional)
+$ cp .env.example .env.local
+# Edit .env.local and add your Google Analytics tracking ID
+
 # Start the dev server
 $ pnpm dev
 ```
+
+### Environment Variables
+
+Create a `.env.local` file in the root directory (see `.env.example` for reference):
+
+- **VITE_GA_TRACKING_ID** - Your Google Analytics 4 tracking ID (optional, format: `G-XXXXXXXXXX`)
+
+The app will work without environment variables, but analytics tracking requires a valid GA tracking ID.
 
 ## Built With
 

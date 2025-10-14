@@ -1,16 +1,59 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { z } from "zod";
 import toast from "react-hot-toast";
 import { logError } from "../../utils/errorLogging";
 
 const datamuseSchema = z.array(z.object({ word: z.string() }));
 
+// Rate limiting configuration
+const RATE_LIMIT = {
+  MAX_REQUESTS_PER_MINUTE: 10,
+  MIN_REQUEST_INTERVAL_MS: 100, // Minimum time between requests
+};
+
 const useSynonymFetcher = () => {
   const [synonymsCache, setSynonymsCache] = useState({});
   const [isLoadingSynonyms, setIsLoadingSynonyms] = useState(false);
+  const requestTimestamps = useRef([]);
+  const lastRequestTime = useRef(0);
+
+  // Rate limiter function
+  const checkRateLimit = useCallback(() => {
+    const now = Date.now();
+    const oneMinuteAgo = now - 60_000;
+
+    // Remove timestamps older than 1 minute
+    requestTimestamps.current = requestTimestamps.current.filter(
+      (timestamp) => timestamp > oneMinuteAgo,
+    );
+
+    // Check if we've exceeded the rate limit
+    if (
+      requestTimestamps.current.length >= RATE_LIMIT.MAX_REQUESTS_PER_MINUTE
+    ) {
+      return false;
+    }
+
+    // Check minimum interval between requests
+    if (now - lastRequestTime.current < RATE_LIMIT.MIN_REQUEST_INTERVAL_MS) {
+      return false;
+    }
+
+    return true;
+  }, []);
 
   const fetchSynonyms = useCallback(
     async (keywords) => {
+      // Check rate limit
+      if (!checkRateLimit()) {
+        toast.error("Too many requests. Please wait a moment.", {
+          position: "bottom-center",
+          duration: 2000,
+          icon: "⏳",
+        });
+        return synonymsCache;
+      }
+
       setIsLoadingSynonyms(true);
 
       const newSynonyms = {};
@@ -18,14 +61,30 @@ const useSynonymFetcher = () => {
 
       try {
         if (keywordsToFetch.length > 0) {
+          // Use proxy in development, direct API in production
+          const apiBaseUrl =
+            import.meta.env.MODE === "development"
+              ? "/api/datamuse"
+              : "https://api.datamuse.com";
+
           const synonymPromises = keywordsToFetch.map(async (keyword) => {
             try {
+              // Update rate limit tracking
+              const now = Date.now();
+              requestTimestamps.current.push(now);
+              lastRequestTime.current = now;
+
               const response = await fetch(
-                `https://api.datamuse.com/words?rel_syn=${keyword}`,
+                `${apiBaseUrl}/words?rel_syn=${encodeURIComponent(keyword)}`,
+                {
+                  signal: AbortSignal.timeout(5000), // 5 second timeout
+                },
               );
+
               if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
               }
+
               const data = await response.json();
               const validData = datamuseSchema.parse(data);
 
@@ -74,7 +133,7 @@ const useSynonymFetcher = () => {
         return {};
       }
     },
-    [synonymsCache],
+    [synonymsCache, checkRateLimit],
   );
 
   return { fetchSynonyms, synonymsCache, isLoadingSynonyms };
