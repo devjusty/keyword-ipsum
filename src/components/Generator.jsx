@@ -88,7 +88,7 @@ const Generator = () => {
           "Ipsum Generation",
           generateIpsum,
         )(finalKeywords, parsedLength, unit, {
-          startWithLorem,
+          startWithLorem: unit !== "words" && startWithLorem,
           keywordProbability,
         });
 
@@ -137,6 +137,7 @@ const Generator = () => {
         setUnit={setUnit}
         startWithLorem={startWithLorem}
         setStartWithLorem={setStartWithLorem}
+        startWithLoremEnabled={unit !== "words"}
         keywordProbability={keywordProbability}
         setKeywordProbability={setKeywordProbability}
         handleSubmit={handleSubmit}

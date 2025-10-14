@@ -94,6 +94,31 @@ const getRandomInt = (min, max) => {
   return Math.floor(fastRandom() * (max - min + 1)) + min;
 };
 
+const capitalizeWord = (word) => {
+  if (!word) return "";
+  return word.charAt(0).toUpperCase() + word.slice(1);
+};
+
+const applyLoremPrefix = (words) => {
+  for (
+    let index = 0;
+    index < words.length && index < LOREM_IPSUM_WORDS.length;
+    index++
+  ) {
+    words[index] = LOREM_IPSUM_WORDS[index];
+  }
+};
+
+const buildSentence = (wordCount, getWord, useLoremPrefix) => {
+  const words = Array.from({ length: wordCount }, () => getWord());
+  if (useLoremPrefix) applyLoremPrefix(words);
+
+  const [firstWord, ...rest] = words;
+  const first = capitalizeWord(firstWord);
+  const tail = rest.join(" ");
+  return tail ? `${first} ${tail}.` : `${first}.`;
+};
+
 /**
  * Generate a sequence of random words
  */
@@ -114,10 +139,14 @@ const generateIpsum = (
       : Date.now();
 
   // Pre-calculate word selection probabilities
-  const { keywordProbability } = options;
+  const {
+    startWithLorem: startWithLoremOption = true,
+    keywordProbability = 0.3,
+  } = options;
   const hasKeywords = keywords.length > 0;
   const loremWordsLength = LOREM_IPSUM_WORDS.length;
   const keywordsLength = keywords.length;
+  const shouldStartWithLorem = startWithLoremOption && unit !== "words";
 
   // Optimized random word generator
   const getRandomWord = () => {
@@ -128,67 +157,51 @@ const generateIpsum = (
   };
 
   // Generate sentence with specified word count
-  const generateSentence = (wordCount) => {
-    let sentence = "";
-    for (let index = 0; index < wordCount; index++) {
-      if (index > 0) sentence += " ";
-      sentence +=
-        index === 0
-          ? getRandomWord().charAt(0).toUpperCase() + getRandomWord().slice(1)
-          : getRandomWord();
-    }
-    return sentence + ".";
-  };
-
-  // Generate paragraph with specified sentence count
-  const generateParagraph = (sentenceCount) => {
-    let paragraph = "";
-    for (let index = 0; index < sentenceCount; index++) {
-      if (index > 0) paragraph += " ";
-      paragraph += generateSentence(
-        getRandomInt(SENTENCE_WORD_COUNT.min, SENTENCE_WORD_COUNT.max),
-      );
-    }
-    return paragraph;
-  };
-
   let text = "";
 
   // Generate content based on unit type
   switch (unit) {
     case "words": {
-      text = Array.from({ length }, getRandomWord).join(" ");
+      const words = Array.from({ length }, () => getRandomWord());
+      if (shouldStartWithLorem) {
+        applyLoremPrefix(words);
+      }
+      text = words.join(" ");
       break;
     }
 
     case "sentences": {
-      text = Array.from({ length }, () =>
-        generateSentence(
+      text = Array.from({ length }, (_, index) =>
+        buildSentence(
           getRandomInt(SENTENCE_WORD_COUNT.min, SENTENCE_WORD_COUNT.max),
+          getRandomWord,
+          shouldStartWithLorem && index === 0,
         ),
       ).join(" ");
       break;
     }
 
     case "paragraphs": {
-      text = Array.from({ length }, () =>
-        generateParagraph(
-          getRandomInt(
-            PARAGRAPH_SENTENCE_COUNT.min,
-            PARAGRAPH_SENTENCE_COUNT.max,
+      text = Array.from({ length }, (_, paragraphIndex) => {
+        const sentenceCount = getRandomInt(
+          PARAGRAPH_SENTENCE_COUNT.min,
+          PARAGRAPH_SENTENCE_COUNT.max,
+        );
+
+        return Array.from({ length: sentenceCount }, (_, sentenceIndex) =>
+          buildSentence(
+            getRandomInt(SENTENCE_WORD_COUNT.min, SENTENCE_WORD_COUNT.max),
+            getRandomWord,
+            shouldStartWithLorem && paragraphIndex === 0 && sentenceIndex === 0,
           ),
-        ),
-      ).join("\n\n");
+        ).join(" ");
+      }).join("\n\n");
       break;
     }
 
     default: {
       return "";
     }
-  }
-
-  if (options.startWithLorem) {
-    return `${LOREM_IPSUM_WORDS.slice(0, 5).join(" ")} ${text}`;
   }
 
   return text;

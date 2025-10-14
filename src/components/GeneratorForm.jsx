@@ -12,6 +12,7 @@ const GeneratorForm = ({
 
   startWithLorem,
   setStartWithLorem,
+  startWithLoremEnabled,
   keywordProbability,
   setKeywordProbability,
   handleSubmit,
@@ -20,7 +21,7 @@ const GeneratorForm = ({
   handleUnitChange,
 }) => {
   return (
-    <div className="card bg-base-100 shadow-xl mx-auto max-w-2xl">
+    <div className="rounded-tl-md rounded-tr-md bg-base-300 shadow-xl mx-auto max-w-2xl">
       <div className="card-body p-6 md:p-8">
         <form
           className="space-y-6"
@@ -69,7 +70,7 @@ const GeneratorForm = ({
           {/* Controls Row */}
           <div className="flex flex-col sm:flex-row gap-4 items-end">
             {/* Length Input */}
-            <div className="form-control w-full sm:max-w-[120px]">
+            <div className="sm:max-w-[80px]">
               <label className="label pb-1" htmlFor="length">
                 <span className="label-text font-medium mb-2 text-accent">
                   Length
@@ -81,12 +82,12 @@ const GeneratorForm = ({
                 min={1}
                 value={length}
                 onChange={(event) => setLength(event.target.value)}
-                className="input input-bordered w-full"
+                className="input input-bordered"
               />
             </div>
 
             {/* Unit Selector */}
-            <div className="form-control w-full">
+            <div className="form-control">
               <label className="label pb-1" htmlFor="units">
                 <span className="label-text font-medium mb-2 text-accent">
                   Units
@@ -156,8 +157,16 @@ const GeneratorForm = ({
                 </span>
                 <input
                   type="checkbox"
-                  checked={startWithLorem}
-                  onChange={() => setStartWithLorem(!startWithLorem)}
+                  checked={startWithLoremEnabled && startWithLorem}
+                  disabled={!startWithLoremEnabled}
+                  onChange={() =>
+                    startWithLoremEnabled && setStartWithLorem(!startWithLorem)
+                  }
+                  title={
+                    startWithLoremEnabled
+                      ? undefined
+                      : "Start with 'Lorem Ipsum' is unavailable when generating words."
+                  }
                   className="checkbox checkbox-primary"
                 />
               </label>
@@ -168,7 +177,7 @@ const GeneratorForm = ({
           <div className="pt-2">
             <button
               type="submit"
-              className="btn btn-primary w-full md:w-auto min-w-[200px]"
+              className="btn btn-primary w-full md:w-auto md:mx-auto min-w-[200px]"
             >
               Generate Ipsum
             </button>

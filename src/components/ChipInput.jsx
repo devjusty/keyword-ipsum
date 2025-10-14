@@ -57,15 +57,26 @@ function ChipInput({
   const handlePaste = (event) => {
     event.preventDefault();
     const pastedText = event.clipboardData.getData("text/plain");
-    const chips = pastedText
+    const candidates = pastedText
       .split(/[,\s]+/)
       .map((chip) => chip.trim())
-      .filter(
-        (chip) => chip && !value.includes(chip) && value.length < maxChips,
-      );
+      .filter(Boolean);
 
-    if (chips.length > 0) {
-      onChange([...value, ...chips]);
+    if (candidates.length === 0 || value.length >= maxChips) return;
+
+    const existingChips = new Set(value);
+    const availableSlots = maxChips - value.length;
+    const chipsToAdd = [];
+
+    for (const candidate of candidates) {
+      if (chipsToAdd.length >= availableSlots) break;
+      if (existingChips.has(candidate)) continue;
+      existingChips.add(candidate);
+      chipsToAdd.push(candidate);
+    }
+
+    if (chipsToAdd.length > 0) {
+      onChange([...value, ...chipsToAdd]);
     }
   };
 

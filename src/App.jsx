@@ -14,11 +14,16 @@ function App() {
           <h1 className="p-1 text-lg tracking-wider">Keyword Ipsum</h1>
         </div>
 
-        <p className="text-lg lg:w-1/3 mx-auto mt-8 sm:w-auto">
-          Use this Lorem Ipsum Generator to generate custom text with your own
-          keywords. Enter your list of keywords and sentence length, and
-          generate unique Lorem Ipsum text for your project or design.
-        </p>
+        <div className="text-md text-primary-content/80 md:w-1/2 mx-auto mb-4 sm:w-auto">
+          <p>
+            Use this Lorem Ipsum Generator to generate custom text with your own
+            keywords.
+          </p>
+          <p>
+            Enter your list of keywords and text length to generate unique Lorem
+            Ipsum text for your project or design.
+          </p>
+        </div>
         <Generator />
       </div>
     </>

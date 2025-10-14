@@ -50,10 +50,12 @@ const GeneratorResult = ({ ipsumText, unit }) => {
 
   if (!ipsumText) {
     return (
-      <div className="card bg-base-100 shadow-xl mx-auto max-w-2xl mt-8">
+      <div className="rounded-br-md rounded-bl-md bg-base-200 inset-shadow-2xs mx-auto max-w-2xl">
         <div className="card-body items-center text-center p-8">
-          <div className="text-5xl mb-4">📝</div>
-          <h3 className="text-lg font-medium mb-2">Your Ipsum Awaits</h3>
+          <div className="flex items-center justify-center">
+            <div className="text-3xl mb-4">📝</div>
+            <div className="text-lg font-medium mb-2">Your Ipsum Awaits</div>
+          </div>
           <p className="text-base-content/60 mb-4">
             Enter your keywords and generate custom Lorem Ipsum text.
           </p>
@@ -63,7 +65,7 @@ const GeneratorResult = ({ ipsumText, unit }) => {
   }
 
   return (
-    <div className="card bg-base-100 shadow-xl mx-auto max-w-2xl mt-8">
+    <div className="card card-border bg-base-100 shadow-inner mx-auto max-w-2xl">
       <div className="card-body p-6 md:p-8">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">Generated Text</h3>
@@ -78,7 +80,7 @@ const GeneratorResult = ({ ipsumText, unit }) => {
 
         <div className="card-actions justify-end mt-4">
           <button
-            className="btn btn-outline btn-sm"
+            className="btn btn-primary btn-outline btn-sm"
             onClick={handleCopyText}
             disabled={!ipsumText}
             aria-label="Copy Ipsum text"

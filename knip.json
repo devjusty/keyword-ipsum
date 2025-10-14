@@ -1,21 +1,29 @@
 {
-  "entry": ["src/main.jsx"],
-  "project": ["src/**/*.js", "src/**/*.jsx"],
-  "ignore": [
-    "node_modules",
-    "dist",
-    "build",
-    "public",
-    "*.config.js",
-    "*.config.mjs",
-    ".*.js",
-    "src/assets/**",
-    "src/utils/errorLogging.js",
-    "src/utils/performanceTracking.js"
-  ],
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": ["src/main.jsx!", "index.html!"],
+  "project": ["src/**/*.{js,jsx}"],
+  "ignore": ["dist/**", "node_modules/**", "src/assets/**"],
   "ignoreDependencies": [
     "tailwindcss",
     "daisyui",
-    "eslint-plugin-react-refresh"
-  ]
+    "@tailwindcss/postcss",
+    "postcss",
+    "typescript"
+  ],
+  "ignoreBinaries": ["husky"],
+  "vite": {
+    "entry": ["vite.config.js", "index.html"]
+  },
+  "vitest": {
+    "entry": ["src/**/*.test.{js,jsx}"]
+  },
+  "eslint": {
+    "entry": ["eslint.config.js"]
+  },
+  "prettier": {
+    "entry": [".prettierrc"]
+  },
+  "postcss": {
+    "entry": ["postcss.config.mjs"]
+  }
 }
