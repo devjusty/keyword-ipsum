@@ -20,6 +20,13 @@ const GeneratorForm = ({
   synonymsCache,
   handleUnitChange,
 }) => {
+  let loadedKeywordCount = 0;
+  for (const keyword of keywords) {
+    if (Object.prototype.hasOwnProperty.call(synonymsCache, keyword)) {
+      loadedKeywordCount += 1;
+    }
+  }
+
   return (
     <div className="rounded-tl-md rounded-tr-md bg-base-300 shadow-xl mx-auto max-w-2xl">
       <div className="card-body p-6 md:p-8">
@@ -192,9 +199,7 @@ const GeneratorForm = ({
                   Fetching synonyms...
                 </span>
               ) : (
-                `Synonyms loaded for ${
-                  Object.keys(synonymsCache).length
-                } keyword(s)`
+                `Synonyms loaded for ${loadedKeywordCount} keyword(s)`
               )}
             </div>
           )}
