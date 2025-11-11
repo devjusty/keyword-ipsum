@@ -11,6 +11,31 @@ const RATE_LIMIT = {
   MIN_REQUEST_INTERVAL_MS: 100, // Minimum time between requests
 };
 
+const fetchWithTimeout = async (resource, options = {}, timeoutMs = 5000) => {
+  if (
+    typeof AbortSignal !== "undefined" &&
+    typeof AbortSignal.timeout === "function"
+  ) {
+    return fetch(resource, {
+      ...options,
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+  }
+
+  if (typeof AbortController === "undefined") {
+    return fetch(resource, options);
+  }
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    return await fetch(resource, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timeoutId);
+  }
+};
+
 const useSynonymFetcher = () => {
   const [synonymsCache, setSynonymsCache] = useState({});
   const [isLoadingSynonyms, setIsLoadingSynonyms] = useState(false);
@@ -74,11 +99,10 @@ const useSynonymFetcher = () => {
               requestTimestamps.current.push(now);
               lastRequestTime.current = now;
 
-              const response = await fetch(
+              const response = await fetchWithTimeout(
                 `${apiBaseUrl}/words?rel_syn=${encodeURIComponent(keyword)}`,
-                {
-                  signal: AbortSignal.timeout(5000), // 5 second timeout
-                },
+                {},
+                5000,
               );
 
               if (!response.ok) {

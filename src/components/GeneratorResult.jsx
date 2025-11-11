@@ -34,7 +34,11 @@ const GeneratorResult = ({ ipsumText, unit }) => {
 
     switch (unit) {
       case "words": {
-        return `Words: ${ipsumText.split(/\s+/).length}`;
+        const normalized = ipsumText.trim();
+        const tokens = normalized
+          ? normalized.split(/\s+/).filter(Boolean)
+          : [];
+        return `Words: ${tokens.length}`;
       }
       case "sentences": {
         return `Sentences: ${ipsumText.split(/[.!?]+/).filter(Boolean).length}`;
