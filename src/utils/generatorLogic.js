@@ -87,6 +87,23 @@ function fastRandom() {
   return (seed >>> 0) / 0x1_00_00_00_00; // Convert to float in [0, 1)
 }
 
+const computeSeedFromKeywords = (keywords) => {
+  const FNV_OFFSET = 0x81_1c_9d_c5;
+  const FNV_PRIME = 0x01_00_01_93;
+
+  let hash = FNV_OFFSET;
+
+  for (const word of keywords) {
+    for (const symbol of word) {
+      hash ^= symbol.codePointAt(0);
+      hash = Math.imul(hash, FNV_PRIME) >>> 0;
+    }
+    hash = Math.imul(hash ^ 0x9e_37_79_b9, FNV_PRIME) >>> 0;
+  }
+
+  return hash || FNV_OFFSET;
+};
+
 /**
  * Get a random integer between min and max (inclusive)
  */
@@ -130,13 +147,7 @@ const generateIpsum = (
   options = { startWithLorem: true, keywordProbability: 0.3 },
 ) => {
   // Reset seed for deterministic results with the same input
-  seed =
-    keywords.length > 0
-      ? keywords.reduce(
-          (accumulator, word) => accumulator + word.codePointAt(0),
-          0,
-        )
-      : Date.now();
+  seed = keywords.length > 0 ? computeSeedFromKeywords(keywords) : Date.now();
 
   // Pre-calculate word selection probabilities
   const {

@@ -64,4 +64,25 @@ describe("generateIpsum", () => {
     expect(paragraphs[0].startsWith("Lorem")).toBe(true);
     expect(paragraphs[1].startsWith("Lorem")).toBe(false);
   });
+
+  it("produces repeatable output for the same keywords", () => {
+    const options = { startWithLorem: false, keywordProbability: 0.4 };
+    const firstRun = generateIpsum(["apple", "banana"], 10, "words", options);
+    const secondRun = generateIpsum(["apple", "banana"], 10, "words", options);
+
+    expect(firstRun).toBe(secondRun);
+  });
+
+  it("changes the output when keywords differ", () => {
+    const options = { startWithLorem: false, keywordProbability: 0.4 };
+    const appleIpsum = generateIpsum(["apple", "banana"], 50, "words", options);
+    const apricotIpsum = generateIpsum(
+      ["apricot", "banana"],
+      50,
+      "words",
+      options,
+    );
+
+    expect(appleIpsum).not.toBe(apricotIpsum);
+  });
 });
