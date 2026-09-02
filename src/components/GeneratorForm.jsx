@@ -89,19 +89,19 @@ const GeneratorForm = ({
         </div>
 
         {/* Unit Selector */}
-        <div className="form-control">
+        <div className="form-control min-w-0">
           <label className="label pb-1" htmlFor="units">
             <span className="label-text font-medium mb-2 text-accent">
               Units
             </span>
           </label>
           <div
-            className="join w-full"
+            className="join w-full min-w-0"
             role="radiogroup"
             aria-labelledby="units-label"
           >
             <input
-              className="join-item btn flex-1"
+              className="join-item btn min-w-0 flex-1 whitespace-normal"
               type="radio"
               value="paragraphs"
               checked={unit === "paragraphs"}
@@ -110,7 +110,7 @@ const GeneratorForm = ({
               onChange={handleUnitChange}
             />
             <input
-              className="join-item btn flex-1"
+              className="join-item btn min-w-0 flex-1 whitespace-normal"
               type="radio"
               value="sentences"
               checked={unit === "sentences"}
@@ -119,7 +119,7 @@ const GeneratorForm = ({
               onChange={handleUnitChange}
             />
             <input
-              className="join-item btn flex-1"
+              className="join-item btn min-w-0 flex-1 whitespace-normal"
               type="radio"
               value="words"
               checked={unit === "words"}
