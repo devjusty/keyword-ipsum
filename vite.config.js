@@ -1,12 +1,13 @@
 import { defineConfig } from "vite";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
+import netlify from "@netlify/vite-plugin";
 
 export default defineConfig(({ mode }) => {
   const isDevelopment = mode === "development";
 
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [react(), tailwindcss(), netlify()],
     test: {
       include: ["src/**/*.{test,spec}.{js,jsx}"],
     },
