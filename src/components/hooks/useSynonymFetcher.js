@@ -3,6 +3,8 @@ import { z } from "zod";
 import toast from "react-hot-toast";
 import { logError } from "../../utils/errorLogging";
 
+z.config({ jitless: true });
+
 const datamuseSchema = z.array(z.object({ word: z.string() }));
 
 // Rate limiting configuration

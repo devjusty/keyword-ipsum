@@ -2,6 +2,7 @@
   "name": "keyword-ipsum",
   "private": true,
   "version": "0.1.0",
+  "packageManager": "pnpm@10.33.3",
   "description": "A simple keyword-based lorem ipsum generator",
   "homepage": "https://keywordipsum.justy.dev",
   "repository": {
