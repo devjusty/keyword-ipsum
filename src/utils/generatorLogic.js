@@ -75,6 +75,10 @@ const LOREM_IPSUM_WORDS = Object.freeze([
 
 const SENTENCE_WORD_COUNT = { min: 3, max: 15 };
 const PARAGRAPH_SENTENCE_COUNT = { min: 1, max: 7 };
+const MAX_GENERATION_LENGTH = 1000;
+
+const isValidGenerationLength = (length) =>
+  Number.isInteger(length) && length > 0 && length <= MAX_GENERATION_LENGTH;
 
 /**
  * Fast random number generator using xorshift32 algorithm
@@ -218,4 +222,4 @@ const generateIpsum = (
   return text;
 };
 
-export { generateIpsum };
+export { generateIpsum, isValidGenerationLength, MAX_GENERATION_LENGTH };

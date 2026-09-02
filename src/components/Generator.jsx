@@ -1,7 +1,11 @@
 import { useState, useCallback, useMemo, memo } from "react";
 import DOMPurify from "dompurify";
 import toast, { Toaster } from "react-hot-toast";
-import { generateIpsum } from "../utils/generatorLogic";
+import {
+  generateIpsum,
+  isValidGenerationLength,
+  MAX_GENERATION_LENGTH,
+} from "../utils/generatorLogic";
 import { logError } from "../utils/errorLogging";
 import { trackPerformance } from "../utils/performanceTracking";
 import useSynonymFetcher from "./hooks/useSynonymFetcher";
@@ -63,13 +67,16 @@ const Generator = () => {
         return;
       }
 
-      const parsedLength = Number.parseInt(length, 10);
-      if (Number.isNaN(parsedLength) || parsedLength <= 0) {
-        toast.error("Please enter a positive number for length", {
-          position: "bottom-center",
-          duration: 2000,
-          icon: "❌",
-        });
+      const parsedLength = Number(length);
+      if (!isValidGenerationLength(parsedLength)) {
+        toast.error(
+          `Length must be a whole number from 1 to ${MAX_GENERATION_LENGTH}`,
+          {
+            position: "bottom-center",
+            duration: 2000,
+            icon: "❌",
+          },
+        );
         return;
       }
 

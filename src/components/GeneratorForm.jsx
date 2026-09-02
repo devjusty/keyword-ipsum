@@ -1,5 +1,6 @@
 import { memo } from "react";
 import ChipInput from "./ChipInput";
+import { MAX_GENERATION_LENGTH } from "../utils/generatorLogic";
 
 const GeneratorForm = ({
   keywords,
@@ -87,6 +88,7 @@ const GeneratorForm = ({
                 type="number"
                 id="length"
                 min={1}
+                max={MAX_GENERATION_LENGTH}
                 value={length}
                 onChange={(event) => setLength(event.target.value)}
                 className="input input-bordered"

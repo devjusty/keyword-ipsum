@@ -1,7 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { generateIpsum } from "./generatorLogic";
+import {
+  generateIpsum,
+  isValidGenerationLength,
+  MAX_GENERATION_LENGTH,
+} from "./generatorLogic";
 
 describe("generateIpsum", () => {
+  it("accepts only positive integer lengths within maximum", () => {
+    expect(isValidGenerationLength(1)).toBe(true);
+    expect(isValidGenerationLength(MAX_GENERATION_LENGTH)).toBe(true);
+    expect(isValidGenerationLength(0)).toBe(false);
+    expect(isValidGenerationLength(1.5)).toBe(false);
+    expect(isValidGenerationLength(MAX_GENERATION_LENGTH + 1)).toBe(false);
+  });
+
   it("capitalizes the first word from a single token", () => {
     const keywords = ["first", "second"];
     const result = generateIpsum(keywords, 1, "sentences", {

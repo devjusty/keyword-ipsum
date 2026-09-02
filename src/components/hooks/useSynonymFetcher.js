@@ -11,6 +11,57 @@ const RATE_LIMIT = {
   MIN_REQUEST_INTERVAL_MS: 100, // Minimum time between requests
 };
 
+export const getRequestWaitTime = (now, lastRequestTime, interval) =>
+  Math.max(0, interval - (now - lastRequestTime));
+
+const fetchSynonymsSequentially = async (
+  keywords,
+  apiBaseUrl,
+  requestTimestamps,
+  lastRequestTime,
+) => {
+  const synonyms = {};
+
+  for (const keyword of keywords) {
+    try {
+      const waitTime = getRequestWaitTime(
+        Date.now(),
+        lastRequestTime.current,
+        RATE_LIMIT.MIN_REQUEST_INTERVAL_MS,
+      );
+      if (waitTime > 0) {
+        await new Promise((resolve) => setTimeout(resolve, waitTime));
+      }
+
+      const now = Date.now();
+      requestTimestamps.current.push(now);
+      lastRequestTime.current = now;
+
+      const response = await fetchWithTimeout(
+        `${apiBaseUrl}/words?rel_syn=${encodeURIComponent(keyword)}`,
+        {},
+        5000,
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const validData = datamuseSchema.parse(data);
+      synonyms[keyword] = validData
+        .slice(0, 5)
+        .map((item) => item.word)
+        .filter((word) => word.toLowerCase() !== keyword.toLowerCase());
+    } catch (error) {
+      logError("Synonym Fetch", error, { keyword });
+      synonyms[keyword] = [];
+    }
+  }
+
+  return synonyms;
+};
+
 const fetchWithTimeout = async (resource, options = {}, timeoutMs = 5000) => {
   if (
     typeof AbortSignal !== "undefined" &&
@@ -92,47 +143,15 @@ const useSynonymFetcher = () => {
               ? "/api/datamuse"
               : "https://api.datamuse.com";
 
-          const synonymPromises = keywordsToFetch.map(async (keyword) => {
-            try {
-              // Update rate limit tracking
-              const now = Date.now();
-              requestTimestamps.current.push(now);
-              lastRequestTime.current = now;
-
-              const response = await fetchWithTimeout(
-                `${apiBaseUrl}/words?rel_syn=${encodeURIComponent(keyword)}`,
-                {},
-                5000,
-              );
-
-              if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-              }
-
-              const data = await response.json();
-              const validData = datamuseSchema.parse(data);
-
-              return {
-                [keyword]: validData
-                  .slice(0, 5)
-                  .map((item) => item.word)
-                  .filter(
-                    (word) => word.toLowerCase() !== keyword.toLowerCase(),
-                  ),
-              };
-            } catch (error) {
-              logError("Synonym Fetch", error, { keyword });
-              return { [keyword]: [] };
-            }
-          });
-
-          const results = await Promise.all(synonymPromises);
-
-          for (const result of results) {
-            if (result && typeof result === "object") {
-              Object.assign(newSynonyms, result);
-            }
-          }
+          Object.assign(
+            newSynonyms,
+            await fetchSynonymsSequentially(
+              keywordsToFetch,
+              apiBaseUrl,
+              requestTimestamps,
+              lastRequestTime,
+            ),
+          );
         }
 
         if (Object.keys(newSynonyms).length > 0) {

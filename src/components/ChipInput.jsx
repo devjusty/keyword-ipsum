@@ -111,7 +111,7 @@ function ChipInput({
             key={index}
             className="badge badge-lg gap-1 bg-primary/10 text-primary border-0 pl-3 pr-1 py-2 hover:bg-primary/20 transition-colors duration-200"
           >
-            <span className="max-w-[120px] truncate" title={chip}>
+            <span className="max-w-30 truncate" title={chip}>
               {chip}
             </span>
             <button
@@ -139,7 +139,7 @@ function ChipInput({
             onPaste={handlePaste}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            className="flex-1 min-w-[80px] bg-transparent outline-none text-sm"
+            className="flex-1 min-w-20 bg-transparent outline-none text-sm"
             placeholder={value.length === 0 ? placeholder : ""}
             aria-label="Add a keyword"
           />
