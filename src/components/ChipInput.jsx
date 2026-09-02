@@ -97,18 +97,10 @@ function ChipInput({
 
       <div
         className={`w-full flex flex-wrap gap-2 items-center input input-bordered p-2 min-h-12 ${isFocused ? "ring-2 ring-primary/50" : ""}`}
-        onClick={() => inputReference.current?.focus()}
-        onKeyDown={(event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            event.currentTarget.click();
-          }
-        }}
-        role="button"
-        tabIndex={0}
       >
-        {value.map((chip, index) => (
+        {value.map((chip) => (
           <div
-            key={index}
+            key={chip}
             className="badge badge-lg gap-1 bg-primary/10 text-primary border-0 pl-3 pr-1 py-2 hover:bg-primary/20 transition-colors duration-200"
           >
             <span className="max-w-30 truncate" title={chip}>

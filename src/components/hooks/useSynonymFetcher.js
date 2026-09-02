@@ -49,10 +49,13 @@ const fetchSynonymsSequentially = async (
 
       const data = await response.json();
       const validData = datamuseSchema.parse(data);
-      synonyms[keyword] = validData
-        .slice(0, 5)
-        .map((item) => item.word)
-        .filter((word) => word.toLowerCase() !== keyword.toLowerCase());
+      const synonymWords = [];
+      for (const item of validData.slice(0, 5)) {
+        if (item.word.toLowerCase() !== keyword.toLowerCase()) {
+          synonymWords.push(item.word);
+        }
+      }
+      synonyms[keyword] = synonymWords;
     } catch (error) {
       logError("Synonym Fetch", error, { keyword });
       synonyms[keyword] = [];
@@ -161,19 +164,18 @@ const useSynonymFetcher = () => {
           }));
         }
 
-        setIsLoadingSynonyms(false);
-
         const allSynonyms = { ...synonymsCache, ...newSynonyms };
         return allSynonyms;
       } catch (error) {
         logError("Synonym Fetching Main", error);
-        setIsLoadingSynonyms(false);
         toast.error("Failed to fetch synonyms", {
           position: "bottom-center",
           duration: 2000,
           icon: "❌",
         });
         return {};
+      } finally {
+        setIsLoadingSynonyms(false);
       }
     },
     [synonymsCache, checkRateLimit],
