@@ -3,7 +3,4 @@ export default {
   theme: {
     extend: {},
   },
-  daisyui: {
-    themes: ["emerald"],
-  },
 };
