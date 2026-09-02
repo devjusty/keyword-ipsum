@@ -76,7 +76,7 @@ const GeneratorResult = ({ ipsumText, unit }) => {
           <div className="badge badge-ghost">{textCount}</div>
         </div>
 
-        <div className="bg-base-200 rounded-box p-6 min-h-[200px] overflow-auto">
+        <div className="bg-base-200 rounded-box p-6 min-h-50 overflow-auto">
           <pre className="whitespace-pre-wrap wrap-break-word font-sans">
             {ipsumText}
           </pre>
