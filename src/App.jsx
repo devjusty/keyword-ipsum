@@ -1,4 +1,4 @@
-import { BookOpenIcon } from "@radix-ui/react-icons";
+import { ReaderIcon as BookOpenIcon } from "@radix-ui/react-icons";
 import Generator from "./components/Generator";
 
 function App() {
