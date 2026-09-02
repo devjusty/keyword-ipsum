@@ -39,7 +39,7 @@ const GeneratorForm = ({
       </h2>
 
       {/* Keywords and Toggle Row */}
-      <div className="generator-form__keywords flex gap-4">
+      <div className="generator-form__keywords flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
           <ChipInput
             label="Keywords"
