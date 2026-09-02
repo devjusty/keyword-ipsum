@@ -1,4 +1,5 @@
 import { useMemo, useCallback } from "react";
+import { CopyIcon } from "@radix-ui/react-icons";
 import toast from "react-hot-toast";
 
 const GeneratorResult = ({ ipsumText, unit }) => {
@@ -7,7 +8,6 @@ const GeneratorResult = ({ ipsumText, unit }) => {
       toast.error("No text to copy", {
         position: "bottom-center",
         duration: 2000,
-        icon: "❌",
       });
       return;
     }
@@ -17,14 +17,12 @@ const GeneratorResult = ({ ipsumText, unit }) => {
         toast.success("Copied to clipboard", {
           position: "bottom-center",
           duration: 2000,
-          icon: "📋",
         }),
       )
       .catch(() =>
         toast.error("Failed to copy text", {
           position: "bottom-center",
           duration: 2000,
-          icon: "❌",
         }),
       );
   }, [ipsumText]);
@@ -54,58 +52,38 @@ const GeneratorResult = ({ ipsumText, unit }) => {
 
   if (!ipsumText) {
     return (
-      <div className="rounded-br-md rounded-bl-md bg-base-200 inset-shadow-2xs mx-auto max-w-2xl">
-        <div className="card-body items-center text-center p-8">
-          <div className="flex items-center justify-center">
-            <div className="text-3xl mb-4">📝</div>
-            <div className="text-lg font-medium mb-2">Your Ipsum Awaits</div>
-          </div>
-          <p className="text-base-content/60 mb-4">
-            Enter your keywords and generate custom Lorem Ipsum text.
-          </p>
-        </div>
+      <div className="workbench__output result-surface mx-auto w-full max-w-2xl bg-base-200 p-8 text-center">
+        <div className="text-lg font-medium mb-2">Build your first passage</div>
+        <p className="text-base-content/60">
+          Add keywords, then generate text.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="card card-border bg-base-100 shadow-inner mx-auto max-w-2xl">
-      <div className="card-body p-6 md:p-8">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold">Generated Text</h3>
-          <div className="badge badge-ghost">{textCount}</div>
-        </div>
+    <div className="workbench__output result-surface mx-auto w-full max-w-2xl bg-base-100 p-6 md:p-8">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-semibold">Generated Text</h3>
+        <div className="badge badge-ghost">{textCount}</div>
+      </div>
 
-        <div className="bg-base-200 rounded-box p-6 min-h-50 overflow-auto">
-          <pre className="whitespace-pre-wrap wrap-break-word font-sans">
-            {ipsumText}
-          </pre>
-        </div>
+      <div className="bg-base-200 rounded-box p-6 min-h-50 overflow-auto">
+        <pre className="whitespace-pre-wrap wrap-break-word font-sans">
+          {ipsumText}
+        </pre>
+      </div>
 
-        <div className="card-actions justify-end mt-4">
-          <button
-            className="btn btn-primary btn-outline btn-sm"
-            onClick={handleCopyText}
-            disabled={!ipsumText}
-            aria-label="Copy Ipsum text"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 mr-2"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
-              />
-            </svg>
-            Copy to Clipboard
-          </button>
-        </div>
+      <div className="flex justify-end mt-4">
+        <button
+          className="btn btn-primary btn-outline btn-sm whitespace-nowrap"
+          onClick={handleCopyText}
+          disabled={!ipsumText}
+          aria-label="Copy Ipsum text"
+        >
+          <CopyIcon aria-hidden="true" />
+          Copy text
+        </button>
       </div>
     </div>
   );
