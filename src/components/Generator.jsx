@@ -30,13 +30,13 @@ const Generator = () => {
     const errors = [];
 
     if (keywordList.length === 0) {
-      errors.push("Please enter keywords");
+      errors.push("Add at least one keyword.");
     }
     if (keywordList.length > 10) {
-      errors.push("Maximum 10 keywords allowed");
+      errors.push("Use 10 keywords or fewer.");
     }
     if (keywordList.some((kw) => kw.length > 20)) {
-      errors.push("Keywords too long (max 20 characters)");
+      errors.push("Keep each keyword to 20 characters or fewer.");
     }
 
     return { keywordList, errors };
@@ -69,7 +69,7 @@ const Generator = () => {
       const parsedLength = Number(length);
       if (!isValidGenerationLength(parsedLength)) {
         toast.error(
-          `Length must be a whole number from 1 to ${MAX_GENERATION_LENGTH}`,
+          `Enter a whole number from 1 to ${MAX_GENERATION_LENGTH}.`,
           {
             position: "bottom-center",
             duration: 2000,
@@ -101,7 +101,7 @@ const Generator = () => {
         setIpsumText(sanitizedText);
       } catch (error) {
         logError("Ipsum Generation Error", error);
-        toast.error("Failed to generate Ipsum text", {
+        toast.error("Unable to generate text. Try again.", {
           position: "bottom-center",
           duration: 2000,
         });
@@ -131,7 +131,7 @@ const Generator = () => {
           aria-live="polite"
         >
           <span className="loading loading-spinner loading-lg text-primary"></span>
-          <span className="sr-only">Fetching synonyms...</span>
+          <span className="sr-only">Loading synonyms...</span>
         </div>
       )}
 

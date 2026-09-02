@@ -6,7 +6,7 @@ import { hasClipboardSupport } from "../utils/clipboard";
 const GeneratorResult = ({ ipsumText, unit }) => {
   const handleCopyText = useCallback(async () => {
     if (!ipsumText) {
-      toast.error("No text to copy", {
+      toast.error("Nothing to copy yet.", {
         position: "bottom-center",
         duration: 2000,
       });
@@ -14,7 +14,7 @@ const GeneratorResult = ({ ipsumText, unit }) => {
     }
 
     if (!hasClipboardSupport(globalThis.navigator)) {
-      toast.error("Clipboard is unavailable in this browser", {
+      toast.error("Copying is unavailable in this browser.", {
         position: "bottom-center",
         duration: 2000,
       });
@@ -28,7 +28,7 @@ const GeneratorResult = ({ ipsumText, unit }) => {
         duration: 2000,
       });
     } catch {
-      toast.error("Failed to copy text", {
+      toast.error("Unable to copy text. Select and copy it manually.", {
         position: "bottom-center",
         duration: 2000,
       });
@@ -60,34 +60,36 @@ const GeneratorResult = ({ ipsumText, unit }) => {
 
   if (!ipsumText) {
     return (
-      <div className="workbench__output result-surface mx-auto w-full max-w-2xl bg-base-200 p-8 text-center">
-        <div className="text-lg font-medium mb-2">Build your first passage</div>
-        <p className="text-base-content/60">
-          Add keywords, then generate text.
-        </p>
+      <div className="workbench__output result-surface result-surface--empty">
+        <p className="section-kicker">Generated passage</p>
+        <h2>Create a passage</h2>
+        <p>Add keywords to generate a passage.</p>
       </div>
     );
   }
 
   return (
-    <div className="workbench__output result-surface mx-auto w-full max-w-2xl bg-base-100 p-6 md:p-8">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold">Generated Text</h3>
-        <div className="badge badge-ghost">{textCount}</div>
+    <div className="workbench__output result-surface result-surface--filled">
+      <div className="result-heading">
+        <div>
+          <p className="section-kicker">Generated passage</p>
+          <h2>Your generated text</h2>
+        </div>
+        <div className="result-count">{textCount}</div>
       </div>
 
-      <div className="bg-base-200 rounded-box p-6 min-h-50 overflow-auto">
+      <div className="result-copy">
         <pre className="whitespace-pre-wrap wrap-break-word font-sans">
           {ipsumText}
         </pre>
       </div>
 
-      <div className="flex justify-end mt-4">
+      <div className="result-actions">
         <button
-          className="btn btn-primary btn-outline btn-sm whitespace-nowrap"
+          className="btn btn-ghost btn-sm whitespace-nowrap"
           onClick={handleCopyText}
           disabled={!ipsumText}
-          aria-label="Copy Ipsum text"
+          aria-label="Copy generated text"
         >
           <CopyIcon aria-hidden="true" />
           Copy text

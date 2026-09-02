@@ -7,11 +7,10 @@ function ChipInput({
   name,
   value = [],
   onChange,
-  placeholder = "Type and press Enter",
+  placeholder = "Type a keyword",
   maxChips = 10,
 }) {
   const [inputValue, setInputValue] = useState("");
-  const [isFocused, setIsFocused] = useState(false);
   const inputReference = useRef(null);
 
   // Focus the input when the component mounts
@@ -76,28 +75,21 @@ function ChipInput({
   };
 
   return (
-    <div className="w-full">
+    <div className="chip-field">
       {label && (
-        <label htmlFor={name} className="label">
-          <span className="label-text font-medium mb-2 text-accent">
-            {label}
-          </span>
+        <label htmlFor={name} className="chip-field__label">
+          <span>{label}</span>
           {value.length > 0 && (
-            <span className="label-text-alt text-sm">
+            <span className="chip-field__count">
               {value.length}/{maxChips}
             </span>
           )}
         </label>
       )}
 
-      <div
-        className={`w-full flex flex-wrap gap-2 items-center input input-bordered p-2 min-h-12 ${isFocused ? "ring-2 ring-primary/50" : ""}`}
-      >
+      <div className="chip-field__control input input-bordered">
         {value.map((chip) => (
-          <div
-            key={chip}
-            className="badge badge-lg gap-1 bg-primary/10 text-primary border-0 pl-3 pr-1 py-2 hover:bg-primary/20 transition-colors duration-200"
-          >
+          <div key={chip} className="keyword-chip">
             <span className="max-w-30 truncate" title={chip}>
               {chip}
             </span>
@@ -107,7 +99,7 @@ function ChipInput({
                 event.stopPropagation();
                 removeChip(chip);
               }}
-              className="rounded-full hover:bg-primary/20 p-0.5 transition-colors"
+              className="keyword-chip__remove"
               aria-label={`Remove ${chip}`}
             >
               <Cross1Icon width="12" height="12" aria-hidden="true" />
@@ -124,28 +116,28 @@ function ChipInput({
             onChange={(event) => setInputValue(event.target.value)}
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            className="flex-1 min-w-20 bg-transparent outline-none text-sm"
+            className="chip-field__input"
             placeholder={value.length === 0 ? placeholder : ""}
             aria-label="Add a keyword"
           />
         ) : (
-          <span className="text-sm text-base-content/60">
+          <span className="chip-field__limit">
             Maximum {maxChips} keywords reached
           </span>
         )}
         {value.length > 0 && (
-          <button type="button" onClick={() => onChange([])} className="label">
+          <button
+            type="button"
+            onClick={() => onChange([])}
+            className="chip-field__clear"
+          >
             Clear
           </button>
         )}
       </div>
 
-      <div className="label">
-        <span className="label-text-alt mt-2 text-xs text-base-content/60">
-          Press enter or comma to add keywords
-        </span>
+      <div className="chip-field__helper">
+        <span>Press Enter, comma, or Tab to add a keyword.</span>
       </div>
     </div>
   );
