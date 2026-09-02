@@ -125,8 +125,13 @@ const Generator = () => {
       <MemoizedToaster />
 
       {isLoadingSynonyms && (
-        <div className="loading-overlay fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div
+          className="loading-overlay fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          role="status"
+          aria-live="polite"
+        >
           <span className="loading loading-spinner loading-lg text-primary"></span>
+          <span className="sr-only">Fetching synonyms...</span>
         </div>
       )}
 

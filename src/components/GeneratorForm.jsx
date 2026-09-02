@@ -33,6 +33,7 @@ const GeneratorForm = ({
       className="generator-form workbench__controls bg-base-100 space-y-6 p-6 md:p-8"
       onSubmit={handleSubmit}
       aria-labelledby="generator-title"
+      aria-busy={isLoadingSynonyms}
     >
       <h2 id="generator-title" className="text-2xl font-bold mb-2">
         Lorem Ipsum Generator

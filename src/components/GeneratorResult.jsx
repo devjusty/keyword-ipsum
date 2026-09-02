@@ -1,9 +1,10 @@
 import { useMemo, useCallback } from "react";
 import { CopyIcon } from "@radix-ui/react-icons";
 import toast from "react-hot-toast";
+import { hasClipboardSupport } from "../utils/clipboard";
 
 const GeneratorResult = ({ ipsumText, unit }) => {
-  const handleCopyText = useCallback(() => {
+  const handleCopyText = useCallback(async () => {
     if (!ipsumText) {
       toast.error("No text to copy", {
         position: "bottom-center",
@@ -11,20 +12,27 @@ const GeneratorResult = ({ ipsumText, unit }) => {
       });
       return;
     }
-    navigator.clipboard
-      .writeText(ipsumText)
-      .then(() =>
-        toast.success("Copied to clipboard", {
-          position: "bottom-center",
-          duration: 2000,
-        }),
-      )
-      .catch(() =>
-        toast.error("Failed to copy text", {
-          position: "bottom-center",
-          duration: 2000,
-        }),
-      );
+
+    if (!hasClipboardSupport(globalThis.navigator)) {
+      toast.error("Clipboard is unavailable in this browser", {
+        position: "bottom-center",
+        duration: 2000,
+      });
+      return;
+    }
+
+    try {
+      await globalThis.navigator.clipboard.writeText(ipsumText);
+      toast.success("Copied to clipboard", {
+        position: "bottom-center",
+        duration: 2000,
+      });
+    } catch {
+      toast.error("Failed to copy text", {
+        position: "bottom-center",
+        duration: 2000,
+      });
+    }
   }, [ipsumText]);
 
   const textCount = useMemo(() => {

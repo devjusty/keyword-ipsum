@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Cross1Icon } from "@radix-ui/react-icons";
+import { shouldCommitChip } from "../utils/chipInputLogic";
 
 function ChipInput({
   label = "Keywords",
@@ -35,14 +36,8 @@ function ChipInput({
   const handleKeyDown = (event) => {
     const trimmed = inputValue.trim();
 
-    // Add chip on Enter, Comma, Tab, or Space
-    if (
-      (event.key === "Enter" ||
-        event.key === "," ||
-        event.key === "Tab" ||
-        event.key === " ") &&
-      trimmed
-    ) {
+    // Keep spaces available for multi-word keywords.
+    if (shouldCommitChip(event.key, inputValue)) {
       event.preventDefault();
       addChip(trimmed);
     }
