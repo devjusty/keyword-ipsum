@@ -19,7 +19,7 @@ Reduce obvious AI-generated visual patterns while preserving generator behavior.
 - Use Satoshi for body and headings; remove or repurpose the unused Rubik Scribble face only if it supports the brand mark without weakening legibility.
 - Replace layered card/shadow treatment with one restrained surface per workbench region, hairline rules, and minimal elevation.
 - Left-align primary page content; reserve centering for empty-state content where useful.
-- Use Lucide icons consistently. Remove emoji from empty state and toast configuration.
+- Use Radix Icons consistently. Replace Lucide icons and remove `lucide-react` after all imports are migrated. Remove emoji from empty state and toast configuration.
 
 ## Copy and interactions
 
@@ -38,6 +38,8 @@ Expected production edits:
 - `src/components/GeneratorForm.jsx`
 - `src/components/GeneratorResult.jsx`
 - `src/components/Generator.jsx`
+- `package.json`
+- `pnpm-lock.yaml`
 
 No production files will be deleted. Brainstorm companion artifacts remain outside production source.
 
