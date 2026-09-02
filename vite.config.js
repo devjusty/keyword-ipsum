@@ -7,6 +7,9 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react(), tailwindcss()],
+    test: {
+      include: ["src/**/*.{test,spec}.{js,jsx}"],
+    },
     server: {
       // Only development-specific server config
       ...(isDevelopment && {
@@ -29,11 +32,6 @@ export default defineConfig(({ mode }) => {
           overlay: true,
         },
       }),
-    },
-    // Environment variables
-    define: {
-      "import.meta.env.PROD": JSON.stringify(!isDevelopment),
-      "import.meta.env.DEV": JSON.stringify(isDevelopment),
     },
     // Development-specific build config
     build: isDevelopment

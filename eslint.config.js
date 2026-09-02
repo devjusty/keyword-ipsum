@@ -10,7 +10,18 @@ import prettierPlugin from "eslint-config-prettier";
 import importPlugin from "eslint-plugin-import";
 
 export default [
-  { ignores: ["dist", "node_modules"] },
+  {
+    ignores: [
+      "**/node_modules/**",
+      "**/agents/**",
+      "**/dist/**",
+      "**/dist-ssr/**",
+      "**/.worktrees/**",
+      "**/.netlify/**",
+      "**/coverage/**",
+      "**/.vitest/**",
+    ],
+  },
   {
     files: ["**/*.{js,jsx}"],
     languageOptions: {
