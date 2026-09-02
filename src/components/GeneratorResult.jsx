@@ -8,7 +8,6 @@ const GeneratorResult = ({ ipsumText, unit }) => {
       toast.error("No text to copy", {
         position: "bottom-center",
         duration: 2000,
-        icon: "❌",
       });
       return;
     }
@@ -18,14 +17,12 @@ const GeneratorResult = ({ ipsumText, unit }) => {
         toast.success("Copied to clipboard", {
           position: "bottom-center",
           duration: 2000,
-          icon: "📋",
         }),
       )
       .catch(() =>
         toast.error("Failed to copy text", {
           position: "bottom-center",
           duration: 2000,
-          icon: "❌",
         }),
       );
   }, [ipsumText]);
