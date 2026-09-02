@@ -30,7 +30,7 @@ const GeneratorForm = ({
 
   return (
     <form
-      className="workbench__controls bg-base-100 space-y-6 p-6 md:p-8"
+      className="generator-form workbench__controls bg-base-100 space-y-6 p-6 md:p-8"
       onSubmit={handleSubmit}
       aria-labelledby="generator-title"
     >

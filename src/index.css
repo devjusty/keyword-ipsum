@@ -109,6 +109,23 @@ h1 {
   padding-inline: 0;
 }
 
+.generator-form {
+  container: generator-form / inline-size;
+}
+
+@container generator-form (max-width: 31rem) {
+  .generator-form__keywords,
+  .generator-form__generation-controls,
+  .generator-form__options {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .generator-form__generation-controls > div:first-child {
+    max-width: none;
+  }
+}
+
 @media (min-width: 52rem) {
   .workbench {
     grid-template-columns: minmax(16rem, 0.7fr) minmax(0, 1.3fr);
