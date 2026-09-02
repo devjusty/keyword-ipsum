@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { X } from "lucide-react";
+import { Cross1Icon } from "@radix-ui/react-icons";
 
 function ChipInput({
   label = "Keywords",
@@ -115,7 +115,7 @@ function ChipInput({
               className="rounded-full hover:bg-primary/20 p-0.5 transition-colors"
               aria-label={`Remove ${chip}`}
             >
-              <X size={14} />
+              <Cross1Icon width="12" height="12" aria-hidden="true" />
             </button>
           </div>
         ))}

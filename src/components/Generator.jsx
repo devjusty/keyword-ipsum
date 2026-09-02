@@ -61,7 +61,6 @@ const Generator = () => {
           toast.error(error, {
             position: "bottom-center",
             duration: 2000,
-            icon: "❌",
           });
         }
         return;
@@ -74,7 +73,6 @@ const Generator = () => {
           {
             position: "bottom-center",
             duration: 2000,
-            icon: "❌",
           },
         );
         return;
@@ -106,7 +104,6 @@ const Generator = () => {
         toast.error("Failed to generate Ipsum text", {
           position: "bottom-center",
           duration: 2000,
-          icon: "❌",
         });
       }
     },

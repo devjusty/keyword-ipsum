@@ -128,7 +128,6 @@ const useSynonymFetcher = () => {
         toast.error("Too many requests. Please wait a moment.", {
           position: "bottom-center",
           duration: 2000,
-          icon: "⏳",
         });
         return synonymsCache;
       }
@@ -171,7 +170,6 @@ const useSynonymFetcher = () => {
         toast.error("Failed to fetch synonyms", {
           position: "bottom-center",
           duration: 2000,
-          icon: "❌",
         });
         return {};
       } finally {
