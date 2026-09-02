@@ -4,7 +4,7 @@
 :root {
   --color-paper: #f6f1e8;
   --color-ink: #26231f;
-  --color-muted-ink: #756e64;
+  --color-muted-ink: #756d63;
   --color-accent: #a24f35;
   --color-rule: #d9d0c4;
   --space-page: clamp(1.25rem, 4vw, 4rem);

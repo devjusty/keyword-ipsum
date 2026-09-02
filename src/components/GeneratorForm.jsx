@@ -90,11 +90,14 @@ const GeneratorForm = ({
 
         {/* Unit Selector */}
         <div className="form-control min-w-0">
-          <label className="label pb-1" htmlFor="units">
-            <span className="label-text font-medium mb-2 text-accent">
+          <div className="label pb-1">
+            <span
+              id="units-label"
+              className="label-text font-medium mb-2 text-accent"
+            >
               Units
             </span>
-          </label>
+          </div>
           <div
             className="join w-full min-w-0"
             role="radiogroup"
