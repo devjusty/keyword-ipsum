@@ -1,32 +1,28 @@
-import { BookOpen } from "lucide-react";
+import { BookOpenIcon } from "@radix-ui/react-icons";
 import Generator from "./components/Generator";
 
 function App() {
   return (
-    <>
-      <div className="container mx-auto">
-        <div className="navbar justify-center">
-          <BookOpen
-            className="w-10 h-10"
-            alt="Keyword Ipsum"
-            title="Keyword Ipsum"
-          />
-          <h1 className="p-1 text-lg tracking-wider">Keyword Ipsum</h1>
-        </div>
+    <main className="app-shell">
+      <header className="app-header">
+        <BookOpenIcon aria-hidden="true" width="24" height="24" />
+        <h1>Keyword Ipsum</h1>
+      </header>
 
-        <div className="text-md text-primary-content/80 md:w-1/2 mx-auto mb-4 sm:w-auto">
-          <p>
-            Use this Lorem Ipsum Generator to generate custom text with your own
-            keywords.
-          </p>
-          <p>
-            Enter your list of keywords and text length to generate unique Lorem
-            Ipsum text for your project or design.
-          </p>
-        </div>
+      <section className="app-intro" aria-labelledby="intro-heading">
+        <h2 id="intro-heading" className="sr-only">
+          Keyword text generator
+        </h2>
+        <p>
+          Enter keywords to shape custom Lorem Ipsum, then choose your length
+          and review the generated text.
+        </p>
+      </section>
+
+      <section className="workbench" aria-label="Ipsum generator">
         <Generator />
-      </div>
-    </>
+      </section>
+    </main>
   );
 }
 
