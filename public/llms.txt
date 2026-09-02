@@ -1,0 +1,34 @@
+# Keyword Ipsum
+
+> A browser-based generator for custom Lorem Ipsum text built from user-provided keywords.
+
+## About
+
+Keyword Ipsum creates placeholder copy that includes a user's keywords. It is intended for designers, developers, and content creators who need realistic placeholder text with project-specific vocabulary.
+
+## Features
+
+- Generate words, sentences, or paragraphs.
+- Add up to 10 keywords, with each keyword limited to 20 characters.
+- Control generated length and keyword density.
+- Optionally expand keywords with synonyms from Datamuse.
+- Optionally start sentence- or paragraph-based output with “Lorem Ipsum”.
+- Copy generated text to the clipboard.
+
+## Usage
+
+1. Enter one or more keywords.
+2. Choose whether to add synonyms.
+3. Set the output length and unit.
+4. Adjust keyword density if needed.
+5. Select “Generate Ipsum”.
+
+The generator runs in the browser. Synonym expansion uses the Datamuse API when enabled; generated text is not saved by the application.
+
+## Canonical URL
+
+- [Keyword Ipsum](https://keywordipsum.justy.dev/): the live application.
+
+## Source
+
+- [GitHub repository](https://github.com/devjusty/keyword-ipsum): source code and project documentation.
