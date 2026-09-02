@@ -77,7 +77,7 @@ const GeneratorResult = ({ ipsumText, unit }) => {
         </div>
 
         <div className="bg-base-200 rounded-box p-6 min-h-[200px] overflow-auto">
-          <pre className="whitespace-pre-wrap break-words font-sans">
+          <pre className="whitespace-pre-wrap wrap-break-word font-sans">
             {ipsumText}
           </pre>
         </div>
