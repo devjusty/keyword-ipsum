@@ -143,10 +143,6 @@ h1 {
   min-width: 0;
 }
 
-.workbench__controls {
-  padding-inline: 0;
-}
-
 .generator-form {
   container: generator-form / inline-size;
 }
