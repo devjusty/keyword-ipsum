@@ -34,16 +34,25 @@ export default defineConfig(({ mode }) => {
       }),
     },
     // Development-specific build config
-    build: isDevelopment
-      ? {
-          sourcemap: true,
-        }
-      : {},
-    // Development-specific esbuild config
-    esbuild: isDevelopment
-      ? {
-          minify: false,
-        }
-      : {},
+    build: {
+      ...(isDevelopment && {
+        sourcemap: true,
+      }),
+      rolldownOptions: {
+        onwarn(warning, defaultHandler) {
+          if (
+            warning.code === "INVALID_ANNOTATION" &&
+            warning.id?.includes("/node_modules/zod/v4/core/") &&
+            warning.message.includes(
+              "contains an annotation that Rollup cannot interpret due to the position",
+            )
+          ) {
+            return;
+          }
+
+          defaultHandler(warning);
+        },
+      },
+    },
   };
 });
