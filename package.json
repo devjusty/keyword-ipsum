@@ -39,7 +39,7 @@
     "dompurify": "^3.3.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-ga4": "^2.1.0",
+    "react-ga4": "^3.0.1",
     "react-hot-toast": "^2.6.0",
     "zod": "^4.5.4"
   },
@@ -47,7 +47,7 @@
     "@eslint/js": "^9.37.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@tailwindcss/vite": "^4.3.3",
-    "@vitejs/plugin-react": "^5.0.4",
+    "@vitejs/plugin-react": "^6.1.1",
     "daisyui": "^5.7.27",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
@@ -60,13 +60,13 @@
     "eslint-plugin-unicorn": "^61.0.2",
     "globals": "^16.4.0",
     "husky": "^9.1.7",
-    "knip": "^5.66.3",
-    "lint-staged": "^16.2.4",
+    "knip": "^6.34.0",
+    "lint-staged": "^17.4.1",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3",
     "vite": "^8.0.0",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.11"
   }
 }
